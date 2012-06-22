@@ -1,0 +1,1179 @@
+#!/usr/bin/perl -w
+use strict;
+use Glib qw/TRUE FALSE/;
+use Gtk2 '-init';
+use Getopt::Long;
+use utf8;
+use File::Basename;
+use Log::Log4perl qw(:easy);
+use Sys::Hostname;
+
+# get hostname
+my $hostname=hostname();
+
+# get group(=room) of host (not user)
+my $host_group="";
+my $host_uid = getpwnam($hostname);
+my @host_entry= getpwuid($host_uid);
+my $host_gid=$host_entry[3];
+my ($host_room) = getgrgid($host_gid);
+
+#my $hostname=`hostname`;
+my $home = $ENV{'HOME'};
+chomp($hostname);
+my $on_the_go="";
+my $clean_cache=0;
+my $clean_log=0;
+my $help=0;
+my $show_menu=0;
+my $snapshot_search_dir="";
+my $log="/tmp/leovirtstarter.log";
+# allow everybody to log into the logfile
+umask 000;
+# change $INFO to $DEBUG to see more
+Log::Log4perl->easy_init({ 
+#                level   => $INFO,
+                level   => $DEBUG,
+                file    => ">>$log" } );    
+
+use leoclient::leovirtstarter;
+use Filesys::Df;
+
+# Parsen der Optionen
+my $testopt=GetOptions(
+           "help|h" => \$help,
+           "show-menu|menu" => \$show_menu,
+           "on-the-go|g=s" => \$on_the_go,
+           "clean|clean-cache" => \$clean_cache,
+           "clean-log" => \$clean_log,
+           "snapshots|snapshots-search-dir|s=s" => \$snapshot_search_dir,
+          );
+
+# Prüfen, ob Optionen erkannt wurden, sonst Abbruch
+&leovirtstarter::check_options($testopt);
+
+# Einlesen der Server Konfigurationsdatei
+if ($on_the_go ne "" and -e $on_the_go){
+    package ServerConf ; do "$on_the_go"; 
+    # overwriting configuration
+    $ServerConf::snapshot_search_dir_client=$snapshot_search_dir;
+} elsif (-e $Conf::common_configuration_file){
+  package ServerConf ; do "$Conf::common_configuration_file" 
+     || die "Fehler:  \n",
+            "  $Conf::common_configuration_file \n",
+            "could not be processed (syntax error?)\n";
+  print "$Conf::common_configuration_file processed succesfully\n"; 
+} else {
+    print "   ERROR:  None of these configuration files found:\n";
+    print "   * $Conf::common_configuration_file\n";
+    print "   * $on_the_go\n";
+    exit;
+} 
+
+
+if ($clean_cache==1){
+    INFO "Starting leovirtstarter-client --clean-cache on $hostname";
+    INFO "Cleaning the cache";
+    foreach my $cache (@ServerConf::children_shares_client){
+        INFO "Removing recursively $cache";
+        if (-d $cache){
+            system("rm -rf $cache || sudo rm -rf $cache");
+        }
+    }
+    INFO "########################## Exiting ###############################";
+    exit;
+}
+
+
+if ($clean_log==1){
+    system("echo '' > $log");
+    INFO "Previous logfiles cleaned by leovirtstarter-client --clean-log";
+    INFO "########################## Exiting ###############################";
+    exit;
+}
+
+
+if ($help==1){
+   print('
+Options
+  -h  / --help
+
+Development:
+  --clean-cache   (clean all caches)
+  --clean-log     (clean all log files)
+
+Non-Server use:
+  --on-the-go /path/to/config/file  (using another config file)
+  --snapshots /path/to/zipped/snapshots (override path in config files)
+  
+
+');
+   print "\n";
+   exit;
+}
+
+
+
+INFO "Starting leovirtstarter-client on $hostname";
+INFO "UUID: $ServerConf::vbox_uuid (Max RAM: $ServerConf::max_guest_ram)";
+my @unused=@ServerConf::ram_steps;
+# Abhängigkeiten von Paketen: 
+# libfilesys-df-perl (ubuntu 10.04)
+# libglib-perl (lenny)
+# libgtk2-perl
+
+# config
+# auf client bzw. server wird in /etc/leovirtstarter/leovirtstarter.conf
+# so konfiguriert, dass es auf diesselebe Datei auf dem server verweist
+
+# Todo:
+
+# count how often a image was used (from cache) or downloaded
+# from which server:
+# log a line into the server file usage in the directory containing 
+# all images:
+# date::image-name::client-name/IP::user::??
+# log everything into .log/leovirtstarter-err.log
+# 
+# checks:
+# A) no virtualbox is allowed to run, when starting another one
+# B) refresh .Virtualbox, when image could not be started -> 
+# start again/prompt user to refresh and start again 
+
+
+
+# Works:
+# starting from Desktop icon
+
+
+
+# server script
+# the same binary as this (pm)
+#     A) zip all files
+#     B) store size zip and notzipped (and md5sum)
+#     C) rsync zipped files to a list of servers 
+# 
+
+# Option --pack-and-go path-to-packed-files
+# benutze leovirtstarter-client.conf mit Pfad zu vorbereiteter/gepatchter 
+# leovirtstarter-server.conf
+# ersetze .VirtualBox oder patche sie (unionfs?)
+# beim beenden fragen ob /virtual wieder gelöschtw werden soll
+# evtl zusatzoption --link-virtual (verlinkt /virtual zum stick/Platte)
+
+
+########### $app_window ########################################################
+# +++++++++++++++++++++++++ $vbox ++++++++++++++++++++++++++++++++++++++++++++ #
+# + ######################## $ hbox ######################################## + #
+# + # +++ $hbox_starter ++++++++++++++ # +++++++ $hbox_hardware +++++++++  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # + ###### $vbox_hardware #####  +  # + #
+# + # +                              + # + ###### $hardware_grafik ###  +  # + #
+# + # +                              +   + #                         #  +  # + #
+# + # +                              + $ + #                         #  +  # + #
+# + # +                              + h + #                         #  +  # + #
+# + # +                              + b + #                         #  +  # + #
+# + # +                              + o + #                         #  +  # + #
+# + # +                              + x + ###########################  +  # + #
+# + # +                              + _ +                              +  # + #
+# + # +                              + s + ##### $hardware_hsep ######  +  # + #
+# + # +                              + e +                              +  # + #
+# + # +                              + p +                              +  # + #
+# + # +                              + e +                              +  # + #
+# + # +                              + r +                              +  # + #
+# + # +                              + a +                              +  # + #
+# + # +                              + t +                              +  # + #
+# + # +                              + o +                              +  # + #
+# + # +                              + r +                              +  # + #
+# + # +                              +   +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # ++++++++++++++++++++++++++++++++ # ++++++++++++++++++++++++++++++++  # + #
+# + ######################################################################## + #
+# +                                                                          + #
+# + ######################## $vbox_seperator ############################### + #
+# +                                                                          + #
+# + ######################## $align -> $progress_bar ####################### + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + ######################################################################## + #
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+################################################################################
+
+# where to save selected radiobuttons
+my %selected=();
+
+my $copying_done=0; 
+
+# weiter
+# help grafik vervollständigen
+# programm darf nur 1x gestartet werden
+# wenns schon kopiert, dann fragen ob man abbrechen will, oder neue kopie starten
+
+
+my $app_window = Gtk2::Window->new('toplevel');
+
+
+# The following lists might be created automatically
+my $buttons_default="Windows XP Standard";
+my $buttons_as_used="Windows XP wie vorgefunden";
+
+my @buttons=&leovirtstarter::get_snapshots($ServerConf::snapshot_search_dir_client);
+
+@buttons=($buttons_as_used,$buttons_default,@buttons);
+
+my @grafik_buttons=("2D",
+                    "3D Beschleunigung",
+                    "3D und Video Beschleunigung");
+my $grafik_buttons_default="2D";
+
+my $pb_win_get_base_zip;
+my $pb_win_get_zip;
+my $pb_win_start_zip;
+
+
+############################################################
+# Checks 
+############################################################
+
+
+&check_base_image($home,$on_the_go);
+
+my ($ram_buttons_default, @ram_sizes)=&ram_sizes();
+
+#print "\n---$ram_buttons_default---\n\n";
+
+my %ram_mapping=();
+my @ram_buttons=();
+foreach my $size (@ram_sizes){
+    push @ram_buttons, $size;
+    my $string=$size." MB";
+    $ram_mapping{$size}="$string"; 
+}
+
+
+# make sure all cache dirs exist
+foreach my $dir (@ServerConf::children_shares_client){
+    if (not -e $dir){
+            system("mkdir -p $dir || sudo mkdir -p $dir");
+            system("chmod 777 $dir || sudo chmod 777 $dir");
+    }
+}
+
+
+INFO "Starting leovirtstarter-client GUI on $hostname";
+
+############################################################
+# GUI
+############################################################
+
+# create programm window: app_window
+# $app_window definded before check base image which shows it
+$app_window->set_resizable(TRUE);
+$app_window->signal_connect(destroy => \&destroy_progress);
+$app_window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
+$app_window->set_title("Virtuelles Windows starten");
+$app_window->set_border_width(0);
+# Fenstergroesse
+$app_window->set_size_request( 800, 600 );
+# zentrieren
+$app_window->set_position('center_always');
+
+
+############################################################
+# create vbox inside app_window and fill it:
+# hbox, vbox_seperator, align, progress_bar
+############################################################
+my $vbox = Gtk2::VBox->new(FALSE, 5);
+$vbox->set_border_width(0);
+$app_window->add($vbox);
+$vbox->show;
+
+
+
+############################################################
+# Drop Down Menus: machines, help, ...
+############################################################
+my $menu_drop_machine = new Gtk2::Menu();
+my $menu_drop_help = new Gtk2::Menu();
+
+############################################################
+# Menu machine items
+############################################################
+
+# Top
+my $menu_machine_top = new Gtk2::MenuItem( "Virtuelle Maschinen" );
+$menu_machine_top->show();
+$menu_machine_top->set_submenu( $menu_drop_machine );
+
+# item 1
+my $menu_machine_1 = new Gtk2::MenuItem( "Windows" );
+$menu_drop_machine->append( $menu_machine_1 );
+$menu_machine_1->signal_connect( 'activate', sub { print( "Windows\n" ); } );
+$menu_machine_1->show();
+
+# item 2
+my $menu_machine_2 = new Gtk2::MenuItem( "Linux" );
+$menu_drop_machine->append( $menu_machine_2 );
+$menu_machine_2->signal_connect( 'activate', sub { print( "Linux\n" ); } );
+$menu_machine_2->show();
+
+# item ...
+
+
+############################################################
+# Help Menu
+############################################################
+
+# Top 
+my $menu_help_top = new Gtk2::MenuItem( "Hilfe" );
+$menu_help_top->show();
+$menu_help_top->set_submenu( $menu_drop_help );
+
+# item 1
+my $menu_help_1 = new Gtk2::MenuItem( "Hilfe" );
+$menu_drop_help->append( $menu_help_1 );
+$menu_help_1->signal_connect( 'activate', sub { print( "Help\n" ); } );
+$menu_help_1->show();
+
+# item 2
+my $menu_help_2 = new Gtk2::MenuItem( "Über" );
+$menu_drop_help->append( $menu_help_2 );
+$menu_help_2->signal_connect( 'activate', sub { print( "About\n" ); } );
+$menu_help_2->show();
+
+# item ...
+
+############################################################
+# Menu Bar
+############################################################
+
+# Create a menu-bar to hold the menus and add it to 
+# the vbox in our main window
+my $menubar = new Gtk2::MenuBar();
+$vbox->pack_start( $menubar, 0, 0, 2 );
+if ($show_menu==1){
+    $menubar->show();
+}
+
+# And finally we append the top items of a drop down menu
+# to the menu-bar 
+$menubar->append( $menu_machine_top );
+$menubar->append( $menu_help_top );
+
+
+
+############################################################
+# add vbox 
+############################################################
+# create hbox inside vbox
+my $hbox = Gtk2::HBox->new(FALSE, 5);
+$hbox->set_border_width(20);
+# insert hbox into vbox
+$vbox->add($hbox);
+#$vbox->pack_start($hbox, FALSE,FALSE,5);
+$hbox->show;
+
+
+############################################################
+# create the starter box and fill it:
+# hbox_starter, hbox_seperator, $hbox_hardware
+############################################################
+
+# Chooser for the starter box
+my $hbox_starter = &starter_vbox();
+$hbox->add($hbox_starter);
+
+# Trennlinie in hbox
+my $hbox_seperator = Gtk2::VSeparator->new;
+$hbox->pack_start($hbox_seperator, TRUE, FALSE, 5);
+$hbox_seperator->show;
+
+# create vbox for hardware
+my $hbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$hbox_hardware->set_border_width(0);
+# insert vbox into window
+$hbox->add($hbox_hardware);
+$hbox_hardware->show;
+
+
+############################################################
+# add vbox_hardware inside hbox_hardware and fill it:
+# hardware_grafik, hardware_ram 
+############################################################
+
+############################################################
+# grafik radiobuttons
+############################################################
+# hardware_grafik
+my $vbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$vbox_hardware->set_border_width(0);
+$hbox_hardware->add($vbox_hardware);
+
+my $hardware_grafik = Gtk2::Frame->new();
+$hardware_grafik->set_shadow_type ('out');
+$hardware_grafik->set_border_width(10);
+$hardware_grafik->set_label("  Virtuelle Grafik:  ");
+$vbox_hardware->pack_start($hardware_grafik,TRUE,TRUE,5);
+$hardware_grafik->show;
+
+my $grafik_v_stock = Gtk2::VBox->new(FALSE,5);
+$grafik_v_stock->set_border_width(15);
+&create_radiobuttons("GRAFIK",
+                     $grafik_v_stock, 
+                     $grafik_buttons_default,
+                     @grafik_buttons);
+$hardware_grafik->add($grafik_v_stock);
+$vbox_hardware->show_all();
+
+
+############################################################
+# ram radiobuttons
+############################################################
+# hardware_ram
+$vbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$vbox_hardware->set_border_width(0);
+$hbox_hardware->add($vbox_hardware);
+
+my $hardware_ram = Gtk2::Frame->new();
+$hardware_ram->set_shadow_type ('out');
+$hardware_ram->set_border_width(10);
+$hardware_ram->set_label("  Virtueller Arbeitsspeicher (RAM):  ");
+$vbox_hardware->pack_start($hardware_ram,TRUE,TRUE,5);
+$hardware_ram->show;
+
+my $ram_v_stock = Gtk2::VBox->new(FALSE,5);
+$ram_v_stock->set_border_width(15);
+&create_radiobuttons("RAM",
+                     $ram_v_stock, 
+                     $ram_buttons_default,
+                     @ram_buttons);
+$hardware_ram->add($ram_v_stock);
+$vbox_hardware->show_all();
+
+# rows, columns, homogeneous
+my $table = Gtk2::Table->new(2, 3, FALSE);
+$vbox->pack_start($table, FALSE, TRUE, 0);
+$table->show;
+
+# is shown by base image restorer
+#$app_window->show;
+
+Gtk2->main;
+
+0;
+
+
+
+
+############################################################
+# subs
+############################################################
+
+sub check_base_image {
+    my ($home,$on_the_go) = @_;
+    my $get_it=0;
+    my $target_dir = dirname($ServerConf::base_image_client_target);
+    my $base_image_on_the_go=$ServerConf::snapshot_search_dir_client.
+                             "/".
+                             $ServerConf::base_image_client_source.
+                             ".zip";
+    if (-e "$ServerConf::base_image_client_target"){
+        my $size = -s $ServerConf::base_image_client_target;
+        #print "$size  $ServerConf::base_image_size\n";
+        if ($size ne $ServerConf::base_image_size){
+            $get_it=1;
+        } else {
+            $app_window->show;
+        }
+    } else {
+        $get_it=1;
+        if (-d $target_dir){
+            # nothing to do
+        } else {
+            print "I need to create $target_dir on your system:\n";
+            system("mkdir -p $target_dir || sudo mkdir -p $target_dir");
+        } 
+    }
+    if ($get_it==1){
+	&get_zipped_basefile($ServerConf::base_image_client_target);
+    }
+}
+
+
+
+sub get_zipped_basefile {
+    my ($target) = @_;
+    my $target_dir = dirname($ServerConf::base_image_client_target);
+    my $base_image_on_the_go=$ServerConf::snapshot_search_dir_client.
+                             "/".
+                             $ServerConf::base_image_client_source.
+                             ".zip";
+    $pb_win_get_base_zip = Gtk2::Window->new('toplevel');
+    $pb_win_get_base_zip->set_title("Entpacke Windows Basis Image");
+    $pb_win_get_base_zip->set_border_width(20);
+    # Fenstergroesse
+    $pb_win_get_base_zip->set_size_request( 900, 70 );
+    # zentrieren
+    $pb_win_get_base_zip->set_position('center_always');
+    $pb_win_get_base_zip->show;
+    my $progress_bar = Gtk2::ProgressBar->new;
+    $pb_win_get_base_zip->{pbar} = $progress_bar;
+    $pb_win_get_base_zip->add($progress_bar);
+    # movement from left to right
+    $progress_bar->{activity_mode} = 0;
+    $progress_bar->show;
+    # Add a timer callback to update the value of the progress bar
+    $progress_bar->{timer} = Glib::Timeout->add(500, 
+                                         \&unzip_base_timeout, 
+                                         $progress_bar);
+    system("cd $target_dir; unzip -o '$base_image_on_the_go'|| sudo unzip -o '$base_image_on_the_go' &");
+}
+
+
+
+sub unzip_base_timeout {
+    my $actual_size;
+    my $unzipped_size=$ServerConf::base_image_size;
+    my $unzipped_size_mb=int($unzipped_size/1024/1024);
+    my $file=$ServerConf::base_image_client_target;
+    my $progress_bar = shift;
+    # Calculate the value of the progress bar using the
+    # value range set in the adjustment object
+    $actual_size = -s $file;
+    my $new_val = $actual_size/$unzipped_size;
+    $actual_size=int($actual_size/1024/1024);
+
+    # check if done
+    if ($new_val == 1.0){
+        $progress_bar->set_fraction($new_val);
+        $progress_bar->set_text('Fertig!');
+        $pb_win_get_base_zip->destroy;
+        $app_window->show;
+        return FALSE;
+    }
+    # Set the new value
+    $progress_bar->set_text("Entpacke ... $actual_size von $unzipped_size_mb MB");
+    # make it 10% faster
+    $new_val=1.1*$new_val;
+    if ($new_val>=1){
+        $new_val=1;
+    }
+    $progress_bar->set_fraction($new_val);
+
+    # As this is a timeout function, return TRUE so that it
+    # continues to get called
+    return TRUE;
+}
+
+
+
+sub starter_vbox {
+    # The starter Window
+    my $hand_cursor = Gtk2::Gdk::Cursor->new ('hand2');
+    #create a Gtk2::VBox to pack a Gtk2::Frame in. The frame will contain
+    #a Gtk2::ScrolledWindow, which in turn will contain a Gtk2::VBox full
+    #of Gtk2::Buttons
+    my $sw;
+    my $vbox = Gtk2::VBox->new(FALSE,5);
+    my $frame = Gtk2::Frame->new();
+    $frame->set_shadow_type ('out');
+    #method of Gtk2::Container
+    $frame->set_border_width(2);
+    $frame->set_label("  Wählen Sie das virtuelle Windows aus:  ");
+    $sw = Gtk2::ScrolledWindow->new (undef, undef);
+    $sw->set_shadow_type ('etched-out');
+    $sw->set_policy ('never', 'automatic');
+    #This is a method of the Gtk2::Widget class,it will force a minimum 
+    #size on the widget. Handy to give intitial size to a 
+    #Gtk2::ScrolledWindow class object
+    $sw->set_size_request (300, 500);
+    #method of Gtk2::Container
+    $sw->set_border_width(10);
+    #create a vbox that will contain all the stock buttons
+    my $vbox_stock = Gtk2::VBox->new(FALSE,5);
+    $vbox_stock->set_border_width(10);
+    &create_radiobuttons("SYSTEM",
+                         $vbox_stock, 
+                         $buttons_as_used,
+                         @buttons);
+    # add the vbox with all the stock buttons	
+    $sw->add_with_viewport($vbox_stock);
+    $frame->add($sw); 
+    #$frame->add($vbox_stock);
+    $vbox->pack_start($frame,TRUE,TRUE,4);
+
+    # add the big start button
+    my $start_button = Gtk2::Button->new("Starten!");
+    $start_button->set_alignment (0.5, 0.5);
+    $start_button->signal_connect(clicked => \&start_button, $start_button);
+    $vbox->pack_start($start_button, FALSE, FALSE, 0);
+    $start_button->show;
+    $vbox->show_all();
+    return $vbox;
+}
+
+
+
+sub progress_timeout {
+	my $progress_bar = shift;
+	if ($progress_bar->{activity_mode}){
+	    $progress_bar->pulse;
+	} else {
+	    # Calculate the value of the progress bar using the
+	    # value range set in the adjustment object
+	    my $new_val = $progress_bar->get_fraction() + 0.01;
+		
+            if ($new_val > 1.0){
+                $progress_bar->set_text('Entpacke  ...');
+                $new_val = 0.0;
+            }
+	    # Set the new value 
+            # make it faster
+            #$new_val=1.1*$new_val;
+            #if ($new_val>=1){
+            #    $new_val=1;
+            #}
+	    $progress_bar->set_fraction($new_val);
+	}
+
+	# As this is a timeout function, return TRUE so that it
+	# continues to get called
+	return TRUE;
+}
+
+
+
+# Remove the timer
+sub destroy_progress {
+	my $app_window = shift;
+	Glib::Source->remove($app_window->{pbar}->{timer});
+	Gtk2->main_quit;
+}
+
+
+
+# The big start button
+sub start_button {
+    my ($window, $name) = @_;
+    # what to start
+    INFO "########## Start-Button pressed:  ##########";
+    INFO "   RAM:    $selected{'RAM'}";
+    INFO "   GRAFIK: $selected{'GRAFIK'}";
+    INFO "   SYSTEM: $selected{'SYSTEM'}";
+    # check if existing file is OK
+       # copy
+       # copy not needed
+    if ($selected{'SYSTEM'} eq $buttons_as_used){
+        # modify virtual machine
+        my $command_mod="vboxmanage modifyvm $ServerConf::vbox_uuid".
+                        " --memory $selected{'RAM'}";
+        INFO "Executing: $command_mod\n";
+        system($command_mod);
+        # nothing to get and boot it
+        my $command="VirtualBox --startvm $ServerConf::vbox_uuid &";
+        INFO "Executing: $command\n";
+        system($command);
+        INFO "Snapshot started in other window: Terminating here!";
+        exit;
+    } else {
+        # get the zipped snapshot
+        my $zipped_snapshot_file = &get_zipped_snapshot($selected{'SYSTEM'});
+    }
+}
+
+
+
+sub start_zipped_snaphot {
+    my ($zipped_snapshot_file) = @_;
+    if ($zipped_snapshot_file ne "___NOSNAPSHOT___"){
+        INFO "Snapshot unzipped: \n  $zipped_snapshot_file --- $selected{'CACHE-ZIP'} ";
+
+        $pb_win_start_zip = Gtk2::Window->new('toplevel');
+        $pb_win_start_zip->set_title("Entpacke Windows: '$selected{'SYSTEM'}'");
+        $pb_win_start_zip->set_border_width(20);
+        # Fenstergroesse
+        $pb_win_start_zip->set_size_request( 700, 70 );
+        # zentrieren
+        $pb_win_start_zip->set_position('center_always');
+        $pb_win_start_zip->show;
+
+        my $progress_bar = Gtk2::ProgressBar->new;
+        $pb_win_start_zip->{pbar} = $progress_bar;
+        $pb_win_start_zip->add($progress_bar);
+        # movement from left to right
+        $progress_bar->{activity_mode} = 0;
+        # hin und her
+        #$progress_bar->{activity_mode} = 1;
+        $progress_bar->show;
+        # Add a timer callback to update the value of the progress bar
+        $progress_bar->{timer} = Glib::Timeout->add(500, 
+                                             \&unzip_timeout, 
+                                             $progress_bar);
+   
+        system("mkdir -p $ServerConf::snapshot_file_dir || sudo mkdir -p $ServerConf::snapshot_file_dir");
+    #    system("chmod 777  $ServerConf::snapshot_file_dir || sudo chmod 777  $ServerConf::snapshot_file_dir");
+        system("cd $ServerConf::snapshot_file_dir; unzip -o '$zipped_snapshot_file' &");
+        print "$ServerConf::snapshot_file_dir\n";
+        my $unzipped_actual_size=0;
+        my $unzipped_size=$leovirtstarter::snapshots{$selected{'SYSTEM'}}{'filesize_vdi'};
+    } else {
+
+    }
+    #exit;
+}
+
+
+
+sub unzip_timeout {
+    my $actual_size;
+    my $unzipped_size=$leovirtstarter::snapshots{$selected{'SYSTEM'}}{'filesize_vdi'};
+    my $unzipped_size_mb=int($unzipped_size/1024/1024);
+    my $file=$ServerConf::snapshot_file_dir."/".$ServerConf::snapshot_file_name;
+    my $progress_bar = shift;
+    # Calculate the value of the progress bar using the
+    # value range set in the adjustment object
+    $actual_size = -s $file;
+    if (not defined $actual_size){
+        $actual_size=0;
+    }
+    my $new_val = $actual_size/$unzipped_size;
+    $actual_size=int($actual_size/1024/1024);
+
+    # check if done
+    if ($new_val == 1.0){
+        $progress_bar->set_fraction($new_val);
+        $progress_bar->set_text('Fertig!');
+        $pb_win_start_zip->destroy;
+        # modifying virtual machine
+        my $command_mod="vboxmanage modifyvm $ServerConf::vbox_uuid".
+                        " --memory $selected{'RAM'}";
+        INFO "Executing: $command_mod\n";
+        system($command_mod);
+        my $command="VirtualBox --startvm $ServerConf::vbox_uuid &";
+        INFO "Executing: $command\n";
+        system($command);
+        INFO "Snapshot started in other window: Terminating here!";
+        exit;
+        return FALSE;
+    }
+    # Set the new value
+    $progress_bar->set_text("Entpacke ... $actual_size von $unzipped_size_mb MB");
+    # make it 10% faster
+    $new_val=1.1*$new_val;
+    if ($new_val>=1){
+        $new_val=1;
+    }
+    $progress_bar->set_fraction($new_val);
+
+    # As this is a timeout function, return TRUE so that it
+    # continues to get called
+    return TRUE;
+}
+
+
+
+sub getzip_timeout {
+    my $actual_size;
+    my $zipped_size=$leovirtstarter::snapshots{$selected{'SYSTEM'}}{'filesize_zipped'};
+    my $zipped_size_mb=int($zipped_size/1024/1024);
+
+    my $target = $selected{'CACHE-ZIP'};
+
+    my $progress_bar_copy = shift;
+    # Calculate the value of the progress bar using the
+    # value range set in the adjustment object
+    $actual_size = -s $target;
+
+    my $new_val = $actual_size/$zipped_size;
+    $actual_size=int($actual_size/1024/1024);
+    $progress_bar_copy->set_text("Hole ... $actual_size von $zipped_size_mb MB");
+    if ($new_val == 1.0){
+        # Copying of zippd file done
+        $progress_bar_copy->set_fraction($new_val);
+        $progress_bar_copy->set_text('Fertig!');
+        $pb_win_get_zip->destroy;
+        $copying_done=1;
+        INFO "Snapshot was copied to $target";
+        my $started=&start_zipped_snaphot($target);
+        return FALSE;
+    }
+    # make it 10% faster
+    $new_val=1.1*$new_val;
+    if ($new_val>=1){
+        $new_val=1;
+    }
+    # Set the new value
+    $progress_bar_copy->set_fraction($new_val);
+
+    # As this is a timeout function, return TRUE so that it
+    # continues to get called
+    return TRUE;
+}
+
+
+
+sub get_zipped_snapshot {
+    # returns absolute path of zipped file in cache
+    my ($snapshot) = @_;
+    if ($snapshot eq $buttons_default){
+       # This is the default snapshot, do what is configured as default/standard
+	$snapshot=$ServerConf::snapshot_default;
+        $selected{'SYSTEM'}=$snapshot;
+    } elsif ($snapshot eq $buttons_as_used){
+        # start as found
+        #my $started=&start_zipped_snaphot($selected{'CACHE-ZIP'});
+        #my $started=&start_zipped_snaphot("___NOSNAPSHOT___");
+        #return "___NOSNAPSHOT___";  
+    } elsif (not defined $leovirtstarter::snapshots{$snapshot}{'abs_path'}){
+        
+    }
+
+    # zipped snapshot must be fetched
+    # generate paths
+    my $file=$leovirtstarter::snapshots{$snapshot}{'abs_path'};
+    my $dir =$leovirtstarter::snapshots{$snapshot}{'abs_dir'};
+    my $file_zipped=$file.".zip";
+    my $filesize_file_zipped = $dir."/filesize.vdi.zipped";
+
+    my $filesize_correct=`cat '$filesize_file_zipped'`;
+    chomp($filesize_correct);
+    my $filesize_correct_mb=int((1.1*$filesize_correct)/(1024*1024));
+
+    INFO "Wanted in cache with size $filesize_correct:\n   $file_zipped";
+    
+    # is snapshot in cache already and size OK?
+    foreach my $dir (@ServerConf::children_shares_client){
+        my $file=$dir."/".$snapshot."/".$ServerConf::snapshot_file_name.".zip";
+        my $target_dir = $dir."/".$snapshot;
+        my $target=$target_dir."/".$ServerConf::snapshot_file_name.".zip";
+        # save target
+        $selected{'CACHE-ZIP'}=$target;
+        INFO "CACHE-ZIP: $selected{'CACHE-ZIP'}";
+
+	INFO "Checking for existance in $dir:\n   $file";
+	if (-e $file){
+            INFO "Snapshot found in dir!";
+            my $actual_size = -s $file;
+            if ($actual_size==$filesize_correct){
+                INFO  "Snapshot size correct ($actual_size) --> using it:";
+                my $started=&start_zipped_snaphot($selected{'CACHE-ZIP'});
+                return $started;
+            }
+	}
+    }
+
+    # snapshot is not in cache
+
+    # copy snapshot into cache
+    my $count=0;
+    foreach my $dir (@ServerConf::children_shares_client){
+        # go through all caches, check if there is enough space left
+        my $target_dir = $dir."/".$snapshot;
+        my $target=$target_dir."/".$ServerConf::snapshot_file_name.".zip";
+        INFO "*** : $target";
+        # save target
+        $selected{'CACHE-ZIP'}=$target;
+        INFO "   CACHE-ZIP: $selected{'CACHE-ZIP'}";
+        # check if files must be deleted (obey cache size limit ) 
+        my $cache_used = &get_size_in_mb($dir);
+        my $cache=$cache_used+int($filesize_correct/(1024*1024));
+        my ($space_left_mb) = &get_space_left($dir);
+
+        INFO "*** Cache limit:                ",
+             "$ServerConf::children_shares_client_size[$count] MB";
+        INFO "*** Cache used so far:            $cache_used MB";
+        INFO "*** Cache needed with new file:   $cache MB";
+        INFO "*** Space left :                  $space_left_mb MB";
+        INFO "*** Zip-file (incl 10\% reserve): $filesize_correct_mb MB";
+
+        # check available space
+        while ($cache >= $ServerConf::children_shares_client_size[$count]
+               or $filesize_correct_mb >= $space_left_mb){
+            INFO "*** --> cache files must be deleted";
+            my @oldest_in_cache = &oldest_in_cache($dir);
+            if (not defined $oldest_in_cache[0]){
+                # define it to avois errors
+                $oldest_in_cache[0]="_____nonsense_____";
+            }
+            my $oldest=$dir."/".$oldest_in_cache[0];
+            if (-d $oldest ){
+                # delete file here
+                INFO "*** Deleting: $oldest";
+                system("rm -rf '$oldest'");
+                $cache_used = &get_size_in_mb($dir);
+                $cache=$cache_used+int($filesize_correct/(1024*1024));
+                ($space_left_mb) = &get_space_left($dir);
+
+                INFO "*** Cache limit:                ",
+                     "$ServerConf::children_shares_client_size[$count] MB";
+                INFO "*** Cache used so far:            $cache_used MB";
+                INFO "*** Cache needed with new file:   $cache MB";
+                INFO "*** Space left :                  $space_left_mb MB";
+                INFO "*** Zip-file (incl 10\% reserve): $filesize_correct_mb MB";
+            } else {
+                INFO "Nothing to delete!";
+                # exit from while
+                last;
+	    }
+        }        
+
+        # copy snapshot if enough space
+        ($space_left_mb) = &get_space_left($dir);
+        if ($space_left_mb > 10+int($filesize_correct/(1024*1024))){
+
+            system("mkdir -p '$target_dir'");
+            # window erstellen
+            $pb_win_get_zip = Gtk2::Window->new('toplevel'); 
+            $pb_win_get_zip->set_title("Hole gezipptes Windows: '$selected{'SYSTEM'}'");
+            $pb_win_get_zip->set_border_width(20);
+            # Fenstergroesse
+            $pb_win_get_zip->set_size_request( 700, 70 );
+            # zentrieren
+            $pb_win_get_zip->set_position('center_always');
+            $pb_win_get_zip->show;
+
+            my $progress_bar = Gtk2::ProgressBar->new;
+            # wozu?
+            $pb_win_get_zip->{pbar} = $progress_bar;
+            $pb_win_get_zip->add($progress_bar);
+            # movement from left to right
+            $progress_bar->{activity_mode} = 0;
+            # hin und her
+            #$progress_bar->{activity_mode} = 1;
+            $progress_bar->show;
+            # Add a timer callback to update the value of the progress bar
+            $progress_bar->{timer} = Glib::Timeout->add(500, 
+                                             \&getzip_timeout, 
+                                             $progress_bar);
+            INFO "*** Copying $file_zipped --> $target ...";
+            system("cp -v '$file_zipped' '$target' &");
+            INFO "*** ... done!";
+            return $target;
+            #my $actual_size = -s $target;
+            #if (defined $actual_size and $actual_size==$filesize_correct){
+            #    INFO "*** Snapshot size correct!";
+            #    return $target;
+            #}
+        } else {
+            INFO "Could not find space to cache $file";
+        }# end if $space_left_mb > 10+int ...
+        $count++;
+    }
+}
+
+
+
+sub get_space_left {
+    my ($dir) = @_;
+    my $space_left_mb=0;
+    my $space_left=0;
+    # using Filesys::Df
+    my $ref = df($dir);
+    if (defined $ref){
+        $space_left=$ref->{bavail};
+    }
+    $space_left_mb=int($space_left/1024);
+    INFO "*** $space_left_mb MB left in $dir";
+    return $space_left_mb;
+}
+
+
+
+sub oldest_in_cache {
+    my ($dir) = @_;
+    my $result=`ls -Atr1 '$dir'`;
+    my @list = split(/\n/,$result);
+    foreach my $item (@list){
+        INFO "List:  >$item<";
+    }
+    return @list;
+}
+
+
+
+sub get_size_in_mb {
+    # return size of dir in MB
+    my ($dir) = @_;
+    my $string=`du -ms '$dir'`;
+    my ($size,$rest)=split(/\s/,$string);
+    return $size;
+}
+
+
+
+sub create_radiobuttons {
+    # string under which to save selected value in %selected
+    # widget to which radiobuttons will be added
+    # default button ('no button' = do not show a default button)
+    # more buttons
+    my ($type,$radio_box,$default,@buttons) = @_;
+    $selected{$type}=$default;
+    my @radiobutton;
+    my @group;
+
+    my $i=0; # counter for DISPLAYED buttons
+    # add the buttons from the list
+    foreach my $button ( @buttons ){
+        my $button_name;
+        # $button: dirname
+        # $snaphots{$button}
+	INFO "Checking for button $button";
+        my $displayname="---";
+        my $host_string="";
+        my $host_check=0; # default: no check
+        my $room_string="";
+        my $room_check=0; # default: no check
+        if (exists $leovirtstarter::snapshots{$button}{'name'}){
+ 	    INFO "   * Name:       ",
+                 "$leovirtstarter::snapshots{$button}{'name'}";
+            $displayname=$leovirtstarter::snapshots{$button}{'name'};
+        } else {
+            $displayname=$button;
+        }
+        if (exists $leovirtstarter::snapshots{$button}{'maintainer'}){
+ 	    INFO "   * Maintainer: ",
+                 "$leovirtstarter::snapshots{$button}{'maintainer'}";
+            $displayname=$displayname.
+                " (".$leovirtstarter::snapshots{$button}{'maintainer'}.")";
+        }
+        if (exists $leovirtstarter::snapshots{$button}{'host'}){
+            $host_string=$leovirtstarter::snapshots{$button}{'host'};
+            $host_check=1; # check for hosts later
+ 	    INFO "   * Hosts allowed:";
+            my @hosts = split(/,/,$host_string);
+            foreach my $host (@hosts){
+    	        INFO "      * $host";
+                $leovirtstarter::snapshots{$button}{'hosts'}{$host}="OK";
+            }
+        }
+        if (exists $leovirtstarter::snapshots{$button}{'room'}){
+            $room_string=$leovirtstarter::snapshots{$button}{'room'};
+            $room_check=1; # check for rooms later
+            my @rooms = split(/,/,$room_string);
+    	        INFO "   * Rooms allowed";
+            foreach my $room (@rooms){
+    	        INFO "      * $room";
+                $leovirtstarter::snapshots{$button}{'rooms'}{$room}="OK";
+            }
+        }
+
+
+
+        # check if button should be displayed        
+        ########################################
+        my $room_check_ok=1; # default: display 
+        my $host_check_ok=1; # default: display
+
+        if ($room_check==1){
+          if (exists $leovirtstarter::snapshots{$button}{'rooms'}{$host_room}){
+	      INFO "Room $host_room is ",
+                   "$leovirtstarter::snapshots{$button}{'rooms'}{$host_room}";
+          } else {
+              INFO "Room >$host_room< not found as allowed room";
+              $room_check_ok=0; 
+          }
+        }
+
+        if ($host_check==1){
+          if (exists $leovirtstarter::snapshots{$button}{'hosts'}{$hostname}){
+	      INFO "Host $hostname is ",
+                   "$leovirtstarter::snapshots{$button}{'hosts'}{$hostname}";
+          } else {
+              INFO "Host >$hostname< not found as allowed host";
+              $host_check_ok=0; 
+          }
+        }
+
+        if ($room_check_ok==0 and $host_check_ok==0){
+            # beide checks ohne Erfolg
+            next;
+        }
+
+
+
+        if ($type eq "RAM"){
+            if (exists $ram_mapping{$button}){
+                $button_name=$ram_mapping{$button};
+            } else {
+                $button_name=$button;
+            }
+        } else {
+                # $button: dirname
+                # $displayname: name in image.conf
+                $button_name=$displayname;
+        } 
+        if ($i==0){
+            # this is the first button
+            $radiobutton[$i] = Gtk2::RadioButton->new(undef, $button_name);
+            $radio_box->pack_start($radiobutton[0], FALSE, TRUE, 5);
+            $radiobutton[$i]->signal_connect (clicked => sub {
+                   ($selected{$type} = $button); 
+                  });
+            $radiobutton[$i]->show;
+            if ($type eq "RAM"){
+                my $sep = Gtk2::HSeparator->new;
+                $radio_box->pack_start($sep, FALSE, FALSE, 3);
+                $sep->show;
+	    }
+        } else {
+            # just another button
+            @group = $radiobutton[0]->get_group;
+            $radiobutton[$i] = Gtk2::RadioButton->new_with_label(@group,
+                               "$button_name");
+            $radiobutton[$i]->set_active(FALSE);
+            # $radiobutton[$i]->signal_connect (clicked => sub {
+            # ($radiobutton[$i]->get_active) and ($selected_system = $button); 
+            $radiobutton[$i]->signal_connect (clicked => sub {
+                         ($selected{$type} = $button); 
+                  });
+            $radio_box->pack_start($radiobutton[$i],FALSE,FALSE,4);
+        }
+        $i++;
+    }
+}
+
+
+
+sub ram_sizes {
+    my $error_default="512 MB";
+    my $mem_kb=`cat /proc/meminfo | grep MemTotal:`;
+    $mem_kb=~m/([0-9]+)/;
+    my $mem_mb=int($1/1024);
+    my $last_diff_size=100000;
+    my $last_size;
+    my @display_size=();
+    my $list_count=0;
+    print DEBUG "Host memory size: $mem_mb";
+    foreach my $size ( @ServerConf::ram_steps ){
+        DEBUG "Is $size ok for $mem_mb ?";
+        my $diff_size=abs((0.5*$mem_mb)-$size);
+        DEBUG "$diff_size > $last_diff_size ($size MB)";        
+        if ($diff_size > $last_diff_size or
+            $size >$ServerConf::max_guest_ram){
+            last;            
+        }
+        $last_diff_size=$diff_size;
+        $last_size=$size;
+        $list_count++;
+    }
+    my $pre=$list_count-2;
+    my $fix=$list_count-1;
+    my $post=$list_count-0;
+    INFO "        RAM size: $ServerConf::ram_steps[$pre] MB (".$pre.")";
+    INFO "Perfect RAM size: $ServerConf::ram_steps[$fix] MB (: ".$fix.")";
+    INFO "        RAM size: $ServerConf::ram_steps[$post] MB (: ".$post.")";
+
+    @display_size=(
+               $ServerConf::ram_steps[$fix],
+               $ServerConf::ram_steps[$pre]
+                  );
+    if ($ServerConf::ram_steps[$post]<=$ServerConf::max_guest_ram){
+        push @display_size, $ServerConf::ram_steps[$post];
+    }
+    return $ServerConf::ram_steps[$fix],@display_size;
+}

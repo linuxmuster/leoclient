@@ -1,0 +1,161 @@
+#!/usr/bin/perl -w
+use strict;
+use Glib qw/TRUE FALSE/;
+#use Gtk2 '-init';
+use utf8;
+use File::Basename;
+use Getopt::Long;
+use leoclient::leovirtstarter;
+
+
+my $on_the_go="";
+
+# Parsen der Optionen
+my $testopt=GetOptions(
+           "on-the-go=s" => \$on_the_go,
+          );
+
+# Prüfen, ob Optionen erkannt wurden, sonst Abbruch
+&leovirtstarter::check_options($testopt);
+
+# Einlesen der Server Konfigurationsdatei
+if (-e $Conf::common_configuration_file){
+    package ServerConf ; do "$Conf::common_configuration_file" 
+       || die "Fehler:  \n",
+              "  $Conf::common_configuration_file \n",
+              "could not be processed (syntax error?)\n";
+    print "$Conf::common_configuration_file processed succesfully\n"; 
+} else {
+    print "ERROR:  $Conf::common_configuration_file not found!\n";
+    exit;
+}
+
+# server script
+# the same binary as this (pm)
+#     A) copy leovirtstarter-server.conf into Snapshot dir
+#     B) create popularity log file
+#     C) zip all files
+#     D) store size zip and notzipped (and md5sum)
+#     E) dito for base image
+#     F) Todo: rsync zipped files to a list of servers 
+# 
+
+
+# A)
+my $target="$ServerConf::snapshot_search_dir_server"."/leovirtstarter-server.conf";
+print "Creating $target\n";
+system("cp '$Conf::common_configuration_file' '$target'");
+
+
+# B)
+my $popularity_log=$ServerConf::snapshot_search_dir_server."/".$ServerConf::server_popularity_log_file;
+system("touch $popularity_log");
+system("chmod 777 $popularity_log");
+system("echo '### leovirtstarter-server run ###' >> $popularity_log");
+print "Creating/Updating $popularity_log\n";
+
+
+# C) + D)
+my %snapshots=();
+my @snapshots=&leovirtstarter::get_snapshots($ServerConf::snapshot_search_dir_server);
+
+
+# adding the standard snapshot
+@snapshots = (@snapshots,"standard");
+
+my $count=1;
+foreach my $snapshot (@snapshots){
+    print "($count) Processing Snapshot: $snapshot \n";
+    my $file=$leovirtstarter::snapshots{$snapshot}{'abs_path'};
+    my $dir =$leovirtstarter::snapshots{$snapshot}{'abs_dir'};
+    my $file_zipped=$file.".zip";
+    print "   * Dir:     $dir\n";
+    print "   * File:    $file\n";
+    print "   * Zipped:  $file_zipped\n";
+    my $filesize = -s $file;
+    print "   * Newsize: $filesize\n";
+    my $old_filesize=0;
+    my $old_filesize_file = 
+           $leovirtstarter::snapshots{$snapshot}{'abs_dir'}.
+           "/filesize.vdi";
+    my $filesize_file_zipped = 
+           $leovirtstarter::snapshots{$snapshot}{'abs_dir'}.
+           "/filesize.vdi.zipped";
+    if (-e $old_filesize_file){
+        $old_filesize=`cat '$old_filesize_file'`;
+        # uncomment the following to clean all size files
+        #system("rm '$old_filesize_file'");
+        #system("rm '$filesize_file_zipped'");
+        chomp($old_filesize);
+    }
+
+    print "   * Oldsize: $old_filesize\n";
+    if ($filesize == $old_filesize){
+        print "   * Nothing to zip!\n";
+    } else {
+        print "   * Zipping ...\n";
+        # zip command goes here
+        my $file_zipped_rel=$ServerConf::snapshot_file_name.".zip";
+        #print "zip: $file_zipped_rel \n ";
+        system("cd '$dir'; zip $file_zipped_rel $ServerConf::snapshot_file_name");
+        print "   * ... Zipping done!\n";
+        my $filesize_zipped = -s $file_zipped;
+        system("echo $filesize_zipped > '$filesize_file_zipped'");
+
+        # remember zipped filesize
+        system("echo $filesize > '$old_filesize_file'");
+    }
+    $count++;
+}
+
+
+if (-e $ServerConf::base_image_server){
+    print "######## Base image ########\n";
+    print "   * Image:   $ServerConf::base_image_server\n";
+    my $filesize = -s $ServerConf::base_image_server;
+    my $old_filesize=0;
+    my $dirname = dirname($ServerConf::base_image_server);
+    my $filename = basename($ServerConf::base_image_server);
+    my $file_zipped=$ServerConf::base_image_server.".zip";
+    my $old_filesize_file=$dirname."/filesize.vdi";
+    my $filesize_file_zipped=$dirname."/filesize.vdi.zipped";
+    print "   * Dir:     $dirname\n";
+    print "   * File:    $filename\n";
+    print "   * Zipped:  $file_zipped\n";
+    print "   * Newsize: $filesize\n";
+    if (-e $old_filesize_file){
+        $old_filesize=`cat '$old_filesize_file'`;
+        chomp($old_filesize);
+    }
+    print "   * Oldsize: $old_filesize\n";
+    if ($old_filesize==$filesize){
+        print "   * Nothing to zip!\n";
+    } else {
+        print "   * Zipping ...\n";
+        my $file_zipped_rel=$ServerConf::base_image_server.".zip";
+        system("cd '$dirname'; zip $file_zipped_rel $filename");
+        print "   * ... Zipping done!\n";
+
+        my $filesize_zipped = -s $file_zipped;
+
+        system("echo $filesize_zipped > '$filesize_file_zipped'");
+
+        # remember zipped filesize
+        system("echo $filesize > '$old_filesize_file'");
+    }
+} else {
+    print "Base image $ServerConf::base_image_server not found\n";
+}
+
+
+
+
+# copying zipped files on other servers
+
+
+# E)
+
+
+
+
+print "End\n";

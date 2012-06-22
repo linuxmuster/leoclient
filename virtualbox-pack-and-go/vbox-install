@@ -1,0 +1,33 @@
+#!/bin/sh
+
+SOURCE=/media/SCHULE/virtualbox/
+MYMACHINE=$HOME/.VirtualBox/Machines/winXP-2010/
+
+# winXP-2010.xml
+mkdir -p $MYMACHINE
+cp $SOURCE/localadmin/.VirtualBox/Machines/winXP-2010/winXP-2010.xml $MYMACHINE
+
+# Weiter:
+# Zeile MachineEntry aus .VirtualBox/VirtualBox.xml ins HOME 
+# --> winXP-2010 erscheint in VirtualBox
+
+# Zwei Zeilen mit der Harddisk hinzufuegen
+# Achtung End Tag HardDisks erhalten
+
+
+
+# die Festplatten-Dateien kommen in /virtual
+mkdir -p /virtual/vdi
+
+
+# besser rsync
+#cp /media/SCHULE/virtualbox/virtual/virtual/vdi/winXP-2010.vdi /virtual/vdi
+
+mkdir -p /virtual/Machines/winXP-2010/Snapshots
+
+# besser rsync
+#cp /media/SCHULE/virtualbox/virtual/virtual/Machines/winXP-2010/Snapshots/\{8c816439-1e6e-430f-9865-db7a2a96206f\}.vdi /virtual/Machines/winXP-2010/Snapshots
+
+
+# alles lesbar/schreibbar machen
+chown -R bz.bz /virtual

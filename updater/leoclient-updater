@@ -1,0 +1,268 @@
+#!/usr/bin/perl -w
+# leoclient updater
+# $Id$
+# Programm to update scrips on a linux client
+# Licence: General Public Licence (GPL Version 3) 
+# Maintainer: jeffbeck-at-web-de
+
+
+use strict;
+use Getopt::Long;
+Getopt::Long::Configure ("bundling");
+use File::Basename;
+#use File::Path;
+use Term::ReadKey;
+
+
+############################################
+# config
+############################################
+
+# hostname to ping, to see if network and dns is working
+my $ping_host="majestix";
+# how often repeat ping before giving up (ping interval: 2s):
+my $ping_repeat=16;
+
+
+my $package="leoclient";
+my $scriptname="leoclient-updater";
+
+# on the hg server
+my $hg_repo_daily="leoclient-daily";
+my $hg_repo_leo="leoclient";
+
+# on the client
+my $hg_bin="/usr/bin/hg";
+my $hg_dir="/root/hg";
+my $hg_dir_daily="/root/hg"."/".$hg_repo_daily;
+my $hg_dir_leo="/root/hg"."/".$hg_repo_leo;
+# logging
+my $log_dir="/var/log/".$package;
+my $log_file=$log_dir."/log";
+
+system("mkdir -p $log_dir");
+open(LOG, ">>$log_file") || 
+         die "Fehler: $! Kann Datei nicht anlegen"; 
+
+my $date=`date`;
+chomp($date);
+print LOG "\n\n##### $date -> leoclient-updater startet #####\n";
+
+
+my $help=0;
+my $verbose=0;
+my $tip=0;
+
+# Parsen der Optionen
+my $testopt=GetOptions(
+           "help|h" => \$help,
+           "tip" => \$tip,
+           "verbose|v+" => \$verbose,
+          );
+
+
+# Prüfen, ob Optionen erkannt wurden
+&check_options($testopt);
+
+if ($help==1){
+       print('
+leoclient-updater updates the following 2 hg repositories:
+   - leoclient
+   - leoclient-daily
+to /root/hg/
+
+Options
+  -h  / --help
+  --tip   update leoclient, leoclient-daily to tip 
+          install the current versions (for testing, editing)
+  
+
+');
+   print "\n";
+       exit;
+}
+
+
+
+############################################
+# Program
+############################################
+print "Starting leoclient-updater: see $log_file\n";
+
+if (not -x $hg_bin){
+    print LOG "ERROR: hg command not found\n";
+    &error_exit;
+}
+# fetching hg modules
+system("mkdir -p $hg_dir");
+
+
+# try to ping host for 30 second
+# when ping is ok 
+&ping_wait($ping_host);
+
+
+#############################
+# leoclient-daily
+#############################
+
+# 1. fetch current version of leoclient-daily 
+if (not -e $hg_dir_daily){
+   # clone it
+   &hg_command("hg clone ssh://hgro\@cvs.bszleo.de//var/lib/hg/$hg_repo_daily");
+   &hg_command("hg update --clean tip","leoclient-daily");
+} else {
+   # pull changes and update to tip, first command only updates, 
+   # when changes are pulled
+   &hg_command("hg pull -u","leoclient-daily");
+   &hg_command("hg update --clean tip","leoclient-daily");
+}
+
+# 2. and do something with it
+# ...
+# ...
+
+
+
+
+#############################
+# leoclient
+#############################
+
+# 1. fetch current version (online)
+if (not -e $hg_dir_leo){
+   # clone it
+   &hg_command("hg clone ssh://hgro\@cvs.bszleo.de//var/lib/hg/$hg_repo_leo");
+   &hg_command("hg update --clean tip","leoclient");
+} else {
+   # pull changes and update to tip, first command only updates, 
+   # when changes are pulled
+   &hg_command("hg pull -u","leoclient");
+   &hg_command("hg update --clean tip","leoclient");
+}
+
+
+# 2. look for stable version, go back to stable_version (offline)
+if ($tip==0){
+    my $stable=&fetch_version("stable_version");
+    my $fallback=&fetch_version("fallback_version");
+    if ($stable ne ""){
+        # go back
+        # save tip files
+        my $file="./updater/stable_version";
+        my $tmp="./updater/stable_version.tmp";
+        my $file_2="./updater/fallback_version";
+        my $tmp_2="./updater/fallback_version.tmp";
+        &hg_command("cp $file $tmp","leoclient");
+        &hg_command("cp $file_2 $tmp_2","leoclient");
+        &hg_command("hg update --clean $stable","leoclient");
+        # restore tip files
+        &hg_command("mv $tmp $file","leoclient");
+        &hg_command("mv $tmp_2 $file_2","leoclient");
+    }
+    # fallback version is ignored ???? 
+} else {
+    print LOG "#### Not going back in version (option --tip found)\n";
+}
+
+
+# 3. do something with it
+# install all the scripts
+&hg_command("make all","leoclient");
+
+
+
+
+print LOG "##### $date -> leoclient-updater ended   #####\n";
+close(LOG);
+
+print "   leoclient-updater: done!\n";
+
+
+
+
+############################################
+# Subs
+############################################
+
+sub fetch_version {
+    my ($option) = @_;
+    my $file = $hg_dir_leo."/updater/".$option;
+    my $version="";
+    print LOG "##### Fetching version from ${file}:\n";
+    open(FILE, "<$file") || 
+         die "Fehler: $! Kann Datei nicht öffnen";
+    while (<FILE>){ 
+        if(not /^\#/){ # remove comments
+            s/\s//g; # remove whitespace
+            chomp();
+            $version=$_;
+        }
+    }
+    close(FILE);
+    print LOG "--->$version<---\n";
+    return $version;
+}
+
+
+sub hg_command {
+    my ($command,$repo) = @_;
+    my $dir=$hg_dir;
+    if (defined $repo){
+        $dir=$hg_dir."/$repo";
+    } else {
+        $repo="";
+    }
+    my $execute="cd ".$dir."; ".$command." 2>&1 >> ".$log_file;
+    print LOG "##### Executing:\n";
+    print LOG "$execute\n";
+    my $ret=system("cd $dir; $command 2>&1 >> $log_file");
+    print LOG "##### Command returned: $ret\n";
+    if ($ret==0){
+        print "   OK: $command \n",
+              "       ($repo) --> succesful (Return $ret)\n";
+    } else {
+        print "   ERROR: $command \n",
+              "          ($repo) --> had problems (Return $ret)\n";
+    }
+}
+
+
+sub error_exit {
+    print "ERROR: see $log_file\n";
+    print LOG "##### leoclient-updater ended with ERROR #####\n";
+    print LOG "##### $date -> leoclient-updater ended   #####\n";
+    exit;
+}
+
+
+sub  check_options{
+   my ($parse_ergebnis) = @_;
+   if (not $parse_ergebnis==1){
+      my @list = split(/\//,$0);
+      my $scriptname = pop @list;
+      print "\nYou have made a mistake, when specifying options.\n"; 
+      print "See error message above. \n\n";
+      print "... $scriptname is terminating.\n\n";
+      exit;
+   } else {
+         #print "   * All options  were recognized.\n";
+   }
+}
+
+
+sub ping_wait {
+    my ($host) = @_;
+    for (my $i=1 ; $i <= $ping_repeat ; $i++){
+        my $result = system("ping -c 1 $host 2>&1 > /dev/null");
+        if ($result==0){
+            print LOG "ping $i to $host was succesful\n";
+            sleep 2;
+            last;
+        } else {
+            print LOG "ping $i to $host not succesful\n";
+            sleep 2;
+        }
+    }
+}
+

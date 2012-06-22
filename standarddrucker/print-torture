@@ -1,0 +1,31 @@
+#!/usr/bin/perl -w
+# $Id$
+# This Script (ausdruck-winxp) was created by Rüdiger Beck
+# It is released under the GPL Version 3
+# For Bugs send mail to:
+# jeffbeck@web.de
+
+# Bibliotheken
+use strict;
+
+my $home=$ENV{'HOME'};
+my $target=$home."/ausdruck-winxp.pdf";
+
+if (not defined $ARGV[0]){
+    print "\nArgument Missing ! (Number of pdf files)\n\n";
+    exit;
+}
+
+
+print "Creating $ARGV[0] files\n";
+for (my $i=1 ; $i <= $ARGV[0] ; $i++){
+    print "Printing $i\n";
+    system("cp ./mini.pdf $target");
+}
+
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+Source: leoclient
+Section: admin
+Priority: optional
+Maintainer: Ruediger Beck <jeffbeck@web.de>
+Build-Depends: debhelper , perl-base, fakeroot
+Standards-Version: 3.5.2
+
+
+
+Package: leovirtstarter-common
+Architecture: all
+Suggests: 
+Pre-Depends:
+Depends:  libfilesys-df-perl 
+Description: alternativ software to start VirtualBox
+ leovirtstarter-client copies and caches VirtualBox snapshots and starts
+ them
+
+Package: leovirtstarter-client
+Architecture: all
+Suggests: 
+Pre-Depends: leovirtstarter-common
+Depends:  
+Description: alternativ software to start VirtualBox
+ leovirtstarter-client copies and caches VirtualBox snapshots and starts
+ them
+
+
+Package: leovirtstarter-server
+Architecture: all
+Suggests: 
+Pre-Depends:
+Depends:  leovirtstarter-common
+Description: prepares snapshots for leovirtstarter-client 
+ leovirtstarter-server compresses snapshots and determines theis sizes and 
+ syncs them to other servers
+
+

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+SAVE=/media/SCHULE/virtualbox/
+MYMACHINE=$HOME/.VirtualBox/Machines/winXP-2010/
+
+# Verzeichnis VirtualBox-pack-and-go anlegen
+
+# darin VirtualBox-pack-and-go/.VirtualBox speichern
+
+
+# /virtual nach VirtualBox-pack-and-go speichern
+
+
+# snaphots nach VirtualBox-pack-and-go speichern
+# evtl. reichen die komprimierten und beschreibungsdateien
+

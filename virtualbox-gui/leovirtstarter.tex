@@ -1,0 +1,150 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{ngerman}
+\usepackage{fancybox} 
+\usepackage{marvosym}
+\usepackage[dvips]{color} 
+\usepackage{fancyhdr}
+\usepackage{moreverb}
+\usepackage[cdot,amssymb,thickqspace]{SIunits}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{3mm}
+\begin{document}
+ 
+
+\section{Funktionsprinzip}
+
+Eine virtuelle Festplatte von \verb|VirtualBox| besteht aus 2 Dateien:
+
+\begin{enumerate}
+\item Die Basisdatei
+\item Die Snapshotdatei
+\end{enumerate}
+
+Wird bei ausgeschaltetem virtuellem Rechner die Snapshotdatei ersetzt,
+kann man ein anderes, durch die Snapshotdatei festgelegten Image booten.
+
+\verb|leovirtstarter-server| komprimiert und managed die Snapshots auf
+dem Server. Evtl. werden die Dateien noch auf weitere Server
+gesynct. Dieses Script hat kein GUI.
+
+\verb|leovirtstarter-client| ist ein Programm mikt GUI. 
+
+Es listet die verfügbaren, komprimierten Snapshot-Dateien des Servers
+auf. Es ermöglicht dann, diese Snapshot-Dateien vom Server zu holen,
+zu entpacken und zu booten. Dabei werden die Snapshot-Dateien lokal
+gecached, um bei wiederholtem booten an demselben Client den
+Netzwerkdownload zu vermeiden.
+
+Die Bibliothek \verb|leovirtstarter.pm| wird von beiden Scripten
+benutzt.
+
+
+\section{Konfigurationsdateien}
+
+
+\subsection{Auf dem Client}
+
+Auf dem Client befindet sich die Konfigurationsdatei:
+
+\verb|/etc/leovirtstarter/leovirtstarter.conf|
+
+In ihr steht als einziger Parameter, wo sich die
+Server-Konfigurationsdatei befindet (Pfad im Dateisystem zum
+Server-Verzeichnis).
+
+
+\subsection{Auf dem Server}
+
+Zusätzlich zu 
+
+\verb|/etc/leovirtstarter/leovirtstarter.conf|
+
+findet sich auf dem Server die Konfigurationsdatei
+
+\verb|/etc/leovirtstarter/leovirtstarter-server.conf|
+
+Beim Aufruf von \verb|leovirtstarter-server| wird diese Datei ins
+Image-Verzeichnis kopiert. Das bedeutet, dass nach jeder Änderung in
+\verb|leovirtstarter-server.conf| das Serverscript aufgerufen werden
+muss.
+
+
+\subsection{In dem Image-Verzeichnissen auf dem Server}
+
+In der Konfigurationsdatei \verb|image.conf| gibt es folgende
+Parameter (alle Optional):
+
+\begin{itemize}
+\item \verb|name=Physik Windows mit Versuchen|
+
+  Der Name unter dem das Image in der Auswahlliste erscheinen
+  soll. Sinnvoll ist, wenn der Name in Zusammenhang zum
+  Verzeichnisnamen des images steht, und nur durch Sonderzeichen,
+  Leerzeichen usw. unterscheidet.
+
+\item \verb|maintainer=Loginname| 
+
+  Hier wird der \verb|Loginname| der Person eingetragen die das image
+  erstellt hat und weiter pflegen wird. Sie ist auch Ansprechpartner,
+  fall das image nicht mehr benutzt wird und zur Löschung
+  ansteht. Dazu wird an den Loginamen Mail verschickt.
+
+  Der Name erscheint in Klammern bei der Auswahl des Snapshots.
+\end{itemize}
+
+
+Einschränkung auf bestimmte Rechner in \verb|image.conf|. Das Image
+wird angezeigt, wenn \textit{eine} der folgenden Bedingungen zutrifft: 
+
+\begin{itemize}
+\item \verb|host=hostname1,hostname2,hostname3|
+
+  Die Anzeige dieses Images wird auf die genannten Hosts
+  eingeschränkt.
+
+\item \verb|room=room1,room2,room3|
+
+  Die Anzeige dieses Images wird auf die Hosts der genannten Räume
+  eingeschränkt (Der Raum eines Hosts wird ist die primäre Gruppe des
+  Workstationaccounts mit dem Hostname).
+\end{itemize}
+
+Einschränkung auf bestimmte Personen, Klassen und Projekte.  Dies kann
+über die Dateirechte des image-Verzeichnisses eingestellt werden.
+
+Kann man als user den Inhalt dieses Verzeichnisses auflisten, dann
+wird das Image angezeigt.
+
+
+
+\section{Debugging}
+
+\subsection{Fehlermeldungen des Programmes}
+
+
+Hier findet sich der output des Programms
+
+\begin{enumerate}
+\item Starten auf Konsole: Fehlermeldungen im Konsolenfenster
+\item Logdatei ist /tmp/leovirtstarter.log
+\end{enumerate}
+
+
+\subsection{Debugging Optionen}
+
+
+\begin{itemize}
+\item \verb|--host-override new_hostname| nimmt den angegeben Namen
+  statt dem, der \verb|hostname| zurückliefert.
+
+\item \verb|--room-override new_room| nimmt den angegeben Raum statt
+  dem, der durch die primäre Gruppe des Accounts \verb|hostname|
+  zurückliefert wird.
+\end{itemize}
+
+\end{document}

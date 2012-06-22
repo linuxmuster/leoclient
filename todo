@@ -1,0 +1,213 @@
+############################################################
+# leoclient
+############################################################
+
+
+snapshot starter:
+
+Ist auf einem Rechner die Datenpartition (/media/localdisk) mit
+Dateien von Benutzern nahezu voll, so hängt sich der snapshot-starter
+beim Herunterladen des Snapshots auf.  Ich habe einen Rechner parallel
+laufen lassen und dieser war lange fertig, bevor ich das Programm
+beendet habe.  Dieses Verhalten konnte ich an zwei Rechnern
+beobachten.
+
+
+
+debuggen:
+
+- logfiles mit make clearlog loeschen
+- log.1,log.2, ... sollte mit login hochgezaehlt werden
+
+- bei uns wird beim Abmelden die xsession beendet (flackern/konsole kurz sichtbar)
+- gdm wird nicht neu gestartet
+
+gdm wurde neu geschrieben ab ca. gnome 2.20
+
+
+pam:
+
+  auth
+  account
+  session (ab hier Variablen ($HOME) erst vorhanden)
+
+
+Fehlersuche:
+
+wenn abmelden/anmelden hängt:
+
+  1) prozesse des users anzeigen lassen:
+    ps aux | grep username
+ 
+  2) Offene files anzeigen lassen:
+    lsof -p prozessid 
+     prozessid von 1)
+
+
+in Extradatei loggen, z.B. /tmp sodass nix verloren geht:
+
+script | logger
+
+(script) 2>&1 | logger
+
+
+
+
+bioszeitstellen dazu
+
+############################################################
+# Druckerscript
+############################################################
+
+1) ausdruck-winxp-splitter überwacht mit inotify 
+   ~/ausdruck-winxp.pdf 
+und schiebt bei einem File-close die Dateien nach
+   ~/.ausdruck-winxp-spool
+
+2) ausdruck-winxp-spooler überwacht mit inotify
+   ~/.ausdruck-winxp-spool
+und druckt die hiereingemovten Dateien der Reihe nach aus.
+
+Probleme:
+Beim Benutzerwechsel muss altes script gekillt werden.
+sollte mit solchen rechten gestartet werden, dass es geht.
+
+
+
+Einiges mitloggen:
+Zeiten, um die Druckdauer rauszufinden
+Dateigrößen, um die Netzwerklast zu erkennen
+
+
+############################################################
+# Virtualbox script
+############################################################
+
+- intelligenteres überschreieben von ./Virtualbox
+  - z.B. nur, wenn Rechte verändert nicht überschreiben
+
+
+############################################################
+# Idee
+############################################################
+
+- Ziel: Client datet seine scripte, ... automatisch up,
+        damit nicht immer ein neues image vertteiilt werden muss
+
+
+
+- Umsetzung:
+
+Installation auf client:
+  1. als root: 
+   # ssh-keygen -t dsa <RET><RET><RET>
+   # ssh-copy-id -i /root/.ssh/id_dsa.pub hgro@cvs.bszleo.de
+
+  2. Testen: 
+   Login testen (sollte ohne Passwort gehen):
+   # ssh hgro@cvs.bszleo.de
+
+  3. # mkdir /root/hg
+
+  4. # cd /root/hg
+
+  5. 2 Projekte mit dem hgro (hg read-only) account holen
+   # hg clone ssh://hgro@cvs.bszleo.de//var/lib/hg/leoclient
+   # hg clone ssh://hgro@cvs.bszleo.de//var/lib/hg/leoclient-daily
+
+  6. auf die neueste Version leoclinet updaten
+   # cd /root/hg/leoclient
+   # hg pull
+   # hg update
+
+  7. Updater script auf den Rechner installieren:
+   # cd /root/hg/leoclient
+   # make leoclient
+
+  8. Reboot
+   - Bei booten sollte das update-script laufen
+   - Es sollte nach /var/log/leoclient/log geloggt werden  
+
+  9. Wenn OK, dann den Rechner imagen
+
+
+
+  
+  A) Möglichst früh im Bootprozess (sollte beim anmelden fertig sein):
+     1) -> OK: Script /etc/init.d/leoclient-updater anlegen
+     2) -> OK: Diese script in /etc/rc[012...5]/S12leoclient oder so verlinken
+        -> OK: /etc/rc2.d/S99leoclient-updater (siehe Makefile)
+     3) -> OK: verlinken, dass leoclient-updater in PATH ist
+
+  B) Script aktualisiert 2 Mercurial repositories:
+     1) leoclient-daily
+        -> OK: wird auf aktuellste Version gebracht:
+        - message of the day
+        - wichtige infos verbreiten (Anmeldefensterbild)
+
+     2) leoclient
+        -> OK: wird auf aktuellste Version gebracht, 
+        -> OK: dann wird in der Datei 'stable_version' geschaut auf 
+                 welche Version zurückgegangen werden soll. 
+        -> Todo:(Warum ist das notwendig?) 
+               Falls es die stable_version nicht 
+               gibt (Tippfehler, ...) wird in 'fallback_version' geschaut. 
+
+  C) -> OK: make installiert scripte in den client.
+     
+     
+
+  D) weitere Scripte aus dem repository laufen:
+     - je nach Raum
+     - je nach host
+
+     um:
+     - Software in bestimmten Räumen hinzuinstallieren (kleine Pakete)
+     - offiziell (kleine) Virtuelle Maschinen hinzuzunehmen (rsync)
+     - root-Passwort zu setzen (raumweise)
+     - sudoers raumweise anzupassen
+     - vnc außerhalb Klassenräumen abschalten
+     - Drucker setzen (nur sinnvolle Drucker sichtbar)
+
+Nachteile:
+     - nicht für beim booten notwendige Sachen (müsste dann linbo machen) 
+     - script könnte aber noch früher im boot prozess laufen
+
+
+
+Todo:
+
+Testen, dass stable_version auch mit leeren Zeilen zurecht kommt
+Testen, ob last win gilt
+Testen was ist, wenn 
+
+
+
+
+
+
+############################################################
+# linuxmuster-client
+############################################################
+
+Ablauf:
+
+in /etc/security/pam_mount.conf.xml
+
+ist unter    cifsmount   mount.sh angegeben
+ist unter    umount      umount.sh angegeben
+
+
+
+
+
+############################################################
+# linuxmuster-client
+############################################################
+
+/home/share/teachers/.italc/a0107/globalconfig.xml
+
+
+
+
+

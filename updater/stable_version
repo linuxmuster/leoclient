@@ -1,0 +1,6 @@
+# stable version of leoclient
+# hg --debug tags  (show versions)
+# use the unique hexstring and put it in this file
+# i.e.  changeset:   10:e15724a86ef4f1650ebc57f9b72f4e6e93228850
+#           ----->      e15724a86ef4f1650ebc57f9b72f4e6e93228850
+dee8131fc83793c65a0f76696925ff9b1f50357b

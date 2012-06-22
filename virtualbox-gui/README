@@ -1,0 +1,110 @@
+######################################################################
+# Ideen (Todo)
+######################################################################
+
+Idee: 
+----------------------------------------------------------------------
+leovirtstarter-server
+option, die eine Tabelle ausgibt
+
+Verzeichnis | Name | Maintainer | hosts | rooms | last access
+
+
+(hosts und rooms untereinander)
+
+
+Idee:
+----------------------------------------------------------------------
+lastr access:
+
+- jeder download legt Datei an auf servershare 
+  (1 Datei pro start, mit Uhrzeit-hostname als Dateiname)
+  in der Datei stehen Infos
+- leovirtstarter-server liest diese Dateien ein in ein gesamtlogfile
+  und löscht sie dann
+
+ODER: sollen sich die obigen Dateien ansammeln
+
+
+
+
+
+Idee: 
+----------------------------------------------------------------------
+Demonstration/Debug Mode/Offline  
+   option: --localdebug --init /media/lokaldisk/archive
+           ---> erzeugt alles wie untern (oder als script im hg repo?)
+   option: --localdebug --delet /media/lokaldisk/archive
+           ---> löscht alles wieder (oder als script im hg repo?)
+   option: --localdebug
+           ---> nutzt /etc/leovirtstarter/leovirtstarter-localdebug.conf
+
+
+Ziel: einfaches entwickeln auf einem Rechner mit:
+
+
+ leovirtstarter-client
+ leovirtstarter-server
+
+Sind beide Pakete zusammen installierbar?
+
+
+
+
+
+1) client und server scripte lokal installieren
+
+Aus Schulserver debug-Paket extrahieren:
+
+1) Kopieren von  /media/archive/vbox-snapshots
+            nach /media/lokaldisk/archive/vbox-snapshots
+              file    leovirtstarter-server.conf
+                      als
+                      leovirtstarter-server-localdebug.conf
+              dir     base
+              dir     standard
+              dir     + andere zur Demonstartion
+Aus den Verzeichnissen alles Kopieren, auch ungezipptes
+
+2) /etc/leovirtstarter/leovirtstarter.conf
+
+   --> darin /media/archive auf /media/lokaldisk/archive
+       anpassen, damit die 'lokale' Serverconf gefunden wird
+
+   (Alternative: mit option --localdebug wird 
+    /etc/leovirtstarter/leovirtstarter-localdebug.conf genutzt, 
+   die selber geschrieben wird und auf die lokale 
+       leovirtstarter-server-localdebug.conf
+   zeigt, der für
+      $snapshot_search_dir_client="/media/lokaldisk/archive/vbox-snapshots";
+   angehängt wird, um im lokalen archiv zu arbeiten
+      + Anpassungen damit leovirtstarter-server auch lokal arbeiten kann
+
+
+   
+
+
+
+
+                
+
+######################################################################
+# Packaging:
+######################################################################
+
+leovirtstarter-server
+  - script leovirtstarter-server
+  - config /etc/leovirtstarter/leovirtstarter.conf
+  - server-config /etc/leovirtstarter/leovirtstarter-server.conf
+    - depends on leovirtstarter-common
+
+leovirtstarter-client
+  - script leovirtstarter-client
+  - config /etc/leovirtstarter/leovirtstarter.conf
+    - depends on leovirtstarter-common
+
+leovirtstarter-common
+  - leovirtstarter.pm
+
+
+

@@ -1,0 +1,302 @@
+#! /usr/bin/perl -w
+use strict;
+use utf8;
+use Glib qw/TRUE FALSE/;
+use Gtk2 '-init';
+
+# startup:
+# 1) virtualbox must not be in use
+# 2) is 2,3GB file existing, right size
+#    -> create config file:
+#       /abs/path::size in kb::md5sum
+#       --> exit if file has changed
+# 3) sind alle .VirtualBox-Dateien da? (diff -r)
+# 4) Auswahlmenü: alle Imagedateien
+#    kopieren und starten (server waehlen)
+# 5) Diagnose-Modus:
+#    md5sum testen
+#    snapshot-problematik testen 
+# Wenn starten nicht klappt: Fehlersuche
+
+# imageprep script auf server:
+# 1) Pfad durchgehen
+# 2) size in kB erzeigen, md5sum
+
+
+
+# komprimieren
+# serverscript:
+#   A) komprimiere jedes {...}.vdi ins selbe verzeichnis({...}.vdi.zip )
+#   B) erzeuge md5sum der Dateien (wozu?)
+#   C) kopiere die *.zip auf alle NAS-Geräte
+
+# unzip ist 10% schneller als gunzip (Test: 2,3GB-Datei, HWK m9)
+
+
+my $home=$ENV{'HOME'};
+
+
+############################################################
+# Config
+############################################################
+my $base_image="/virtual/vdi/winXP-2010.vdi";
+my $base_image_size="2468409856";
+# Todo
+my $base_image_md5sum="";
+
+
+
+
+# create list of available snapshot files
+my $snapshot_file_name="{8c816439-1e6e-430f-9865-db7a2a96206f}.vdi";
+my $snapshot_search_dir=$home.
+     "/__tauschen/tausch-Lehrer/_Snapshots virtuelles winXP 2010/";
+
+# directory names to hide
+my %snapshots_dont_show=(".","noshow",
+                         "..","noshow",
+                         "alt","noshow");
+my %snapshots=();
+my @snapshots=&get_snapshots();
+my @buttons=("Windows XP booten wie vorgefunden",
+             "Standard Windows XP", @snapshots);
+
+
+ 
+#standard window creation, placement, and signal connecting
+my $window = Gtk2::Window->new('toplevel');
+$window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
+$window->set_border_width(5);
+$window->set_position('center_always');
+
+#this vbox will geturn the bulk of the gui
+my $vbox = &ret_vbox();
+
+# check size of base_image
+&check_base_image();
+
+#add and show the vbox
+$window->add($vbox);
+$window->show();
+
+#our main event-loop
+Gtk2->main();
+
+
+
+
+############################################################
+# subs
+############################################################
+
+sub ret_vbox {
+    # The starter Window
+    my $hand_cursor = Gtk2::Gdk::Cursor->new ('hand2');
+    #create a Gtk2::VBox to pack a Gtk2::Frame in. The frame will contain
+    #a Gtk2::ScrolledWindow, which in turn will contain a Gtk2::VBox full
+    #of Gtk2::Buttons
+    my $sw;
+    my $vbox = Gtk2::VBox->new(FALSE,5);
+    my $frame = Gtk2::Frame->new();
+        $frame->set_shadow_type ('out');
+        #method of Gtk2::Container
+        $frame->set_border_width(30);
+        $frame->set_label("  Wählen Sie das virtuelle Windows aus:  ");
+
+        $sw = Gtk2::ScrolledWindow->new (undef, undef);
+        $sw->set_shadow_type ('etched-out');
+        $sw->set_policy ('never', 'automatic');
+        #This is a method of the Gtk2::Widget class,it will force a minimum 
+        #size on the widget. Handy to give intitial size to a 
+        #Gtk2::ScrolledWindow class object
+        $sw->set_size_request (500, 500);
+        #method of Gtk2::Container
+        $sw->set_border_width(10);
+        #create a vbox that will contain all the stock buttons
+        my $vbox_stock = Gtk2::VBox->new(FALSE,5);
+        foreach my $button ( @buttons ){
+            # $button: dirname
+            # $snaphots{$button}
+            my $displayname="---";
+            if (exists $snapshots{$button}{'name'}){
+                $displayname=$snapshots{$button}{'name'};
+            } else {
+                $displayname=$button;
+            }
+            if (exists $snapshots{$button}{'maintainer'}){
+                $displayname=$displayname.
+                    " (".$snapshots{$button}{'maintainer'}.")";
+            }
+            my $my_button = Gtk2::Button->new("$displayname");
+            $my_button->signal_connect(clicked => \&start_vimage, $button);
+	    $vbox_stock->pack_start($my_button,FALSE,FALSE,4);
+   	}
+        #add the vbox with all the stock buttons	
+        $sw->add_with_viewport($vbox_stock);
+        $frame->add($sw); 
+    $vbox->pack_start($frame,TRUE,TRUE,4);
+    $vbox->show_all();
+    return $vbox;
+}
+
+
+sub start_vimage {
+    # todo
+    # cp file (show progress)
+    # destroy program
+    # start image
+    my ($window,$name) = @_;
+    my $abs_path=$snapshots{$name}{'abs_path'};
+    print "Button:     $name\n";
+    print "Image file:\n",
+          " $abs_path\n";
+
+    my $filesize = -s $abs_path;
+    my $filesize_mb=int($filesize/(1024*1024));
+    print "Size : $filesize_mb MB\n";
+
+
+    my $window2 = Gtk2::Window->new('toplevel');
+    $window2->signal_connect( delete_event => sub { Gtk2->main_quit; } );
+    $window2->set_border_width(15); 
+
+    my $vbox = Gtk2::VBox->new( 0, 10 ); 
+
+    # create progressbar
+    my $pb = Gtk2::ProgressBar->new;
+    $pb->set_orientation ('left-to-right');
+    my $text="kopiere Datei ...";
+    #Gtk2::ProgressBar->set_text($pb, $text);
+
+    my $fraction = 0.0;
+ 
+
+#    my $total_ops = 10;
+#    my $increment = 1 / $total_ops;
+
+#      $progressbar->update( 0.2 );
+#    sleep 1;
+#      $pb->update( '0.4' );
+
+
+# Add a timer callback to update the value of the progress bar
+$pbar->{timer} = Glib::Timeout->add(100, \&progress_timeout, $pbar);
+
+
+#    for (my $x=0; $x < $total_ops; $x++) {
+#
+#        if ($fraction <= 1.0) {
+#           $progressbar->set_fraction($fraction);
+#           $fraction += $increment;
+#           $progressbar->update( $fraction );
+#        }
+#        while (Gtk2->events_pending) {
+#           Gtk2->main_iteration;
+#        }
+#        Gtk2::Gdk->flush;
+    }
+
+#    $progressbar->set_fraction($fraction); 
+#    my $button = Gtk2::Button->new("Get File");
+#    $button->signal_connect( clicked => \&copy_image ); 
+
+    $vbox->pack_start( $pb, TRUE, TRUE, 0 ); 
+    $window2->add($vbox);
+    $window2->show_all(); 
+}
+
+
+sub copy_image {
+    sleep 5;
+}
+
+
+
+
+
+sub check_base_image {
+    my $filesize = -s $base_image;
+    print "Size: $filesize\n";
+    if ($filesize==$base_image_size){
+        # ok
+    } else {
+	&show_message_dialog(undef,
+          "error",
+          "Die Basisimagedatei ist beschädigt. ".
+          "Bitte beheben Sie das Problem wie folgt:\n\n".
+           "1) Starten sie den Rechner neu und wählen Sie ".
+           "'virtuelle Maschinen sync+start'\n".
+	   "2) Starten sie dann wieder ubuntu und die VirtualBox\n",
+           'ok');
+        exit;
+    }
+}
+
+
+
+
+
+
+sub show_message_dialog {
+    #THIS IS THE MAIN FEATURE OF THE APP:
+    #you tell it what to display, and how to display it
+    #$parent is the parent window, or "undef"
+    #$icon can be one of the following:	a) 'info'
+    #					b) 'warning'
+    #					c) 'error'
+    #					d) 'question'
+    #$text can be pango markup text, or just plain text, IE the message
+    #$button_type can be one of the following: 	a) 'none'
+    #						b) 'ok'
+    #						c) 'close'
+    #						d) 'cancel'
+    #						e) 'yes-no'
+    #						f) 'ok-cancel'
+
+    my ($parent,$icon,$text,$button_type) = @_;
+ 
+    my $dialog = Gtk2::MessageDialog->new_with_markup ($parent,
+					[qw/modal destroy-with-parent/],
+					$icon,
+					$button_type,
+					sprintf "$text");
+		
+    # this will typically return certain values depending on the 
+    # value of $retval.
+    # in this application, we only change the label's value accordingly
+    my $retval = $dialog->run;
+    #destroy the dialog as it comes out of the 'run' loop	
+    $dialog->destroy;
+}
+
+
+
+sub get_snapshots {
+    my @snapshots=();
+    #print "opening $snapshot_search_dir\n"; 
+    opendir (DIR, $snapshot_search_dir) || die $!;
+    while( (my $filename = readdir(DIR))){
+        #print("$filename\n");
+	if (exists $snapshots_dont_show{$filename}){
+            next;
+        }
+        push @snapshots, $filename ;
+        my $abs_path=$snapshot_search_dir.$filename."/".$snapshot_file_name;
+        ${snapshots}{$filename}{'abs_path'}=$abs_path;
+        # read image.conf
+        my $file=$snapshot_search_dir."/".$filename."/image.conf";
+        if (-e $file){
+            open (FILE, $file);
+	    while (<FILE>){
+               chomp();
+               my ($key,$value) = split(/=/);
+               ${snapshots}{$filename}{$key}="$value";
+               #print "Key: $key\n";
+               #print "Value: $value\n";
+	    }
+        }
+    }
+    closedir DIR;
+    @snapshots = sort @snapshots;
+    return @snapshots;
+}

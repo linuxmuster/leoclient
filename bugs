@@ -1,0 +1,131 @@
+
+>>>>
+Rechner mit schwarzem Bildschirm, Mauszeiger sicht- und bewegbar.
+
+
+
+- ssh login vergögert möglich
+- top zeigt: 
+############################################################
+9008 rauke     20   0 21900 9856 7964 R 98.0  1.3 312:09.63 gnome-screensaver-dialog --status-message= --enable-switch
+
+
+
+ps aux rauke:
+############################################################
+rauke     1994  0.0  0.2  24052  1828 ?        Sl   09:43   0:00 /usr/bin/gnome-keyring-daemon --daemonize --login
+rauke     3086  0.0  0.0   3236   640 ?        S    16:28   0:00 sleep 5
+1000      3088  0.0  0.1   3332   804 pts/0    S+   16:29   0:00 grep --color=auto rauke
+rauke     4665  0.0  0.7  26284  5664 ?        Ssl  09:43   0:00 gnome-session
+rauke     6200  0.0  0.0   3284   152 ?        Ss   09:43   0:00 /usr/bin/ssh-agent /usr/bin/dbus-launch --exit-with-session gnome-session
+rauke     6203  0.0  0.0   3384   488 ?        S    09:43   0:00 /usr/bin/dbus-launch --exit-with-session gnome-session
+rauke     6204  0.0  0.1   3404  1200 ?        Ss   09:43   0:00 /bin/dbus-daemon --fork --print-pid 5 --print-address 9 --session
+rauke     6207  0.0  0.4   7872  3068 ?        S    09:43   0:01 /usr/lib/libgconf2-4/gconfd-2
+rauke     6214  0.0  1.2 107504  9608 ?        Ss   09:43   0:00 /usr/lib/gnome-settings-daemon/gnome-settings-daemon
+rauke     6216  0.0  0.2   6468  1936 ?        S    09:43   0:00 /usr/lib/gvfs/gvfsd
+rauke     6221  0.0  0.2  30280  2068 ?        Ssl  09:43   0:00 /usr/lib/gvfs//gvfs-fuse-daemon /home/students/m3kk2t/rauke/.gvfs
+rauke     6228  0.0  1.2  56860  9488 ?        S    09:43   0:00 nm-applet --sm-disable
+rauke     6229  0.0  0.6  18772  5088 ?        S    09:43   0:00 /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+rauke     6230  0.0  0.0   1832   460 ?        S    09:43   0:00 /bin/sh /usr/bin/ica-launcher
+rauke     6231  0.0  0.8  19972  6468 ?        S    09:43   0:00 gnome-power-manager
+rauke     6233  0.0  1.4  45040 11204 ?        S    09:43   0:01 gnome-panel
+rauke     6236  0.0  2.1  91524 16376 ?        S    09:43   0:02 nautilus
+rauke     6237  0.0  1.3  96852 10384 ?        Sl   09:43   0:02 metacity --replace
+rauke     6239  0.0  0.5  94404  4348 ?        S<sl 09:43   0:11 /usr/bin/pulseaudio --start --log-target=syslog
+rauke     6243  0.0  0.7  19264  6064 ?        S    09:43   0:00 bluetooth-applet
+rauke     6267  0.0  0.1   3744   944 ?        S    09:43   0:00 avahi-publish-service italc Rauke _italc._tcp 5900 8b35f4cdafc832d6ccf3857d32de53ce 863eace89e861b7c59f6d195d8b6b7bf 24d4365c67b4a9eebd4a07b327694160 j1010p14
+rauke     6272  0.9  1.1  63780  8964 ?        Sl   09:43   4:01 ica -noshm -isdport 5800 -ivsport 5900 -role other
+rauke     6287  0.0  0.2  10844  2296 ?        S    09:43   0:00 /usr/lib/pulseaudio/pulse/gconf-helper
+rauke     6293  0.0  0.3   7120  2604 ?        S    09:43   0:00 /usr/lib/gvfs/gvfsd-trash --spawner :1.6 /org/gtk/gvfs/exec_spaw/0
+rauke     6294  0.0  0.4  32636  3184 ?        S    09:43   0:00 /usr/lib/gvfs/gvfs-gdu-volume-monitor
+rauke     6300  0.0  0.5  43588  4284 ?        S    09:43   0:11 /usr/bin/ica -rx11vs -noshm -nosel -nosetclipboard -rfbport 5900 -rx11vs -isdport 5800 -role other
+rauke     6305  0.0  0.2  16952  1880 ?        Sl   09:43   0:01 /usr/lib/gvfs/gvfs-afc-volume-monitor
+rauke     6308  0.0  0.2   7260  1780 ?        S    09:43   0:00 /usr/lib/gvfs/gvfs-gphoto2-volume-monitor
+rauke     6313  0.0  0.3  40944  2644 ?        Ssl  09:43   0:00 /usr/lib/bonobo-activation/bonobo-activation-server --ac-activate --ior-output-fd=19
+rauke     6329  0.0  1.1  41256  8644 ?        S    09:43   0:00 /usr/lib/gnome-applets/trashapplet --oaf-activate-iid=OAFIID:GNOME_Panel_TrashApplet_Factory --oaf-ior-fd=24
+rauke     6330  0.0  1.4  42992 10768 ?        S    09:43   0:00 /usr/lib/gnome-panel/wnck-applet --oaf-activate-iid=OAFIID:GNOME_Wncklet_Factory --oaf-ior-fd=18
+rauke     6343  0.0  1.0  23072  7744 ?        S    09:43   0:00 /usr/lib/gnome-panel/notification-area-applet --oaf-activate-iid=OAFIID:GNOME_NotificationAreaApplet_Factory --oaf-ior-fd=19
+rauke     6344  0.0  1.4  50988 11160 ?        S    09:43   0:00 /usr/lib/indicator-applet/indicator-applet --oaf-activate-iid=OAFIID:GNOME_IndicatorApplet_Factory --oaf-ior-fd=28
+rauke     6345  0.0  1.5  32332 11888 ?        S    09:43   0:00 /usr/lib/gnome-panel/clock-applet --oaf-activate-iid=OAFIID:GNOME_ClockApplet_Factory --oaf-ior-fd=34
+rauke     6346  0.0  1.4  52208 11468 ?        S    09:43   0:00 /usr/lib/indicator-applet/indicator-applet-session --oaf-activate-iid=OAFIID:GNOME_FastUserSwitchApplet_Factory --oaf-ior-fd=40
+rauke     6349  0.0  0.2   6680  2168 ?        S    09:43   0:00 /usr/lib/gvfs/gvfsd-burn --spawner :1.6 /org/gtk/gvfs/exec_spaw/1
+rauke     6357  0.0  0.7  18200  5412 ?        Ss   09:43   0:01 gnome-screensaver
+rauke     6362  0.0  0.6  18924  4668 ?        S    09:43   0:00 /usr/lib/indicator-me/indicator-me-service
+rauke     6364  0.0  0.5  18152  4584 ?        S    09:43   0:00 /usr/lib/indicator-session/indicator-session-service
+rauke     6375  0.0  0.2   6292  1908 ?        S    09:43   0:00 /usr/lib/gvfs/gvfsd-metadata
+rauke     6378  0.0  0.5  18072  4204 ?        S    09:43   0:00 /usr/lib/indicator-messages/indicator-messages-service
+rauke     6380  0.0  0.5  24296  4104 ?        S    09:43   0:00 /usr/lib/indicator-application/indicator-application-service
+rauke     6382  0.0  0.5  85120  4472 ?        S    09:43   0:00 /usr/lib/indicator-sound/indicator-sound-service
+rauke     6388  0.0  0.8  19004  6568 ?        S    09:43   0:00 /usr/lib/gnome-disk-utility/gdu-notification-daemon
+rauke     6425  0.0  1.2  34904  9428 ?        Sl   09:44   0:00 /usr/lib/evolution/2.28/evolution-alarm-notify
+rauke     6426  0.0  1.9  32272 14896 ?        S    09:44   0:00 python /usr/share/system-config-printer/applet.py
+rauke     6457  0.0  1.3  39492 10384 ?        S    09:44   0:01 update-notifier
+rauke     9008 98.4  1.2  21900  9856 ?        R    11:01 322:29 /usr/lib/gnome-screensaver/gnome-screensaver-dialog --status-message= --enable-switch
+rauke     9817  0.0  0.1   4328  1428 ?        S    11:01   0:03 /bin/bash /usr/bin/ausdruck-winxp.sh
+
+
+rauke ist ein Schüler,
+############################################################
+majestix: smbstatus -b: rauke noch angemeldet
+############################################################
+9315      rauke         m3kk2t        __ffff_10.170.210.14 (::ffff:10.170.210.14)
+
+mount:
+############################################################
+localadmin@j1010p14:~$ mount
+j1010p14 on  ()
+
+mount: warning: /etc/mtab is not writable (e.g. read-only filesystem).
+       It's possible that information reported by mount(8) is not
+       up to date. For actual information about system mount points
+       check the /proc/mounts file.
+
+
+less /etc/mtab:
+############################################################
+j1010p14
+
+
+less /proc/mount
+############################################################
+rootfs / rootfs rw 0 0
+none /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+none /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+none /dev devtmpfs rw,relatime,size=379268k,nr_inodes=94817,mode=755 0 0
+none /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+/dev/sda2 / ext3 ro,relatime,errors=remount-ro,data=ordered 0 0
+none /sys/fs/fuse/connections fusectl rw,relatime 0 0
+none /sys/kernel/debug debugfs rw,relatime 0 0
+none /sys/kernel/security securityfs rw,relatime 0 0
+none /dev/shm tmpfs rw,nosuid,nodev,relatime 0 0
+none /var/run tmpfs rw,nosuid,relatime,mode=755 0 0
+none /var/lock tmpfs rw,nosuid,nodev,noexec,relatime 0 0
+none /lib/init/rw tmpfs rw,nosuid,relatime,mode=755 0 0
+/dev/sda3 /virtual ext2 rw,relatime,errors=continue 0 0
+/dev/sda6 /media/localdisk ext2 rw,relatime,errors=continue 0 0
+binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
+//10.160.1.1/rauke /home/students/m3kk2t/rauke cifs rw,nosuid,nodev,relatime,unc=\\10.160.1.1\rauke,username=rauke,uid=0,noforceuid,gid=10359,noforcegid,addr=10.160.1.1,posixpaths,serverino,nobrl,acl,rsize=16384,wsize=57344 0 0
+//10.160.1.1/shares /home/share cifs rw,mand,nosuid,nodev,relatime,unc=\\10.160.1.1\shares,username=rauke,uid=0,noforceuid,gid=10359,noforcegid,addr=10.160.1.1,posixpaths,serverino,acl,rsize=16384,wsize=57344 0 0
+//10.160.1.1/pgm /home/samba/progs cifs rw,mand,nosuid,nodev,relatime,unc=\\10.160.1.1\pgm,username=rauke,uid=0,noforceuid,gid=10359,noforcegid,addr=10.160.1.1,posixpaths,serverino,acl,rsize=16384,wsize=57344 0 0
+//10.160.1.1/cdrom /home/samba/cds cifs rw,mand,nosuid,nodev,relatime,unc=\\10.160.1.1\cdrom,username=rauke,uid=0,noforceuid,gid=10359,noforcegid,addr=10.160.1.1,posixpaths,serverino,acl,rsize=16384,wsize=57344 0 0
+//10.160.1.1/tasks /var/cache/sophomorix/tasks cifs rw,mand,nosuid,nodev,relatime,unc=\\10.160.1.1\tasks,username=rauke,uid=0,noforceuid,gid=10359,noforcegid,addr=10.160.1.1,posixpaths,serverino,acl,rsize=16384,wsize=57344 0 0
+gvfs-fuse-daemon /home/students/m3kk2t/rauke/.gvfs fuse.gvfs-fuse-daemon rw,nosuid,nodev,relatime,user_id=17668,group_id=10359 0 0
+
+
+Zugriff auf gemountetes:
+############################################################
+touch /home/localadmin/test 
+
+schlägt fehl
+
+sudo su rauke
+ist OK
+
+cd geht in /home/students/m3kk2t/rauke
+ist also OK
+
+touch test
+ist OK, Datei wird dann tatsächlich auf majestix gespeichert
+
+
+

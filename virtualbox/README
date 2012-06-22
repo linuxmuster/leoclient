@@ -1,0 +1,51 @@
+VirtualBox 3.0.2 (update auf 3.0.6) installiert mit zusätzlichen Paketquelle:
+deb http://download.virtualbox.org/virtualbox/debian jaunty non-free
+dann:
+#aptitude update
+#wget -q http://download.virtualbox.org/virtualbox/debian/sun_vbox.asc -O- | sudo apt-key add -
+#aptitude install dkms virtualbox-3.0
+
+VirtualBox-Konfigurationsdateien werden durch das script
+/usr/bin/virtualbox-vm-conf-kopieren.sh 
+1.) aus /usr/share/linuxmuster-client/VirtualBox und
+2.) aus dem schulweiten Tauschverzeichnis und abschließend
+3.) aus dem Lehrertauschverzeichnis
+in das Heimatverzeichnis des angemeldeten Benutzers kopiert,
+falls dort nicht schon Konfigurationsdateien .VirtualBox liegen.
+(alle zu kopierenden Dateien müssen für ALLE lesbar sein.)
+4.) abschließend wird in der Datei .VirtualBox/Machines/winXP/winXP.xml das vbox-share und 
+    das Verzeichnis für die Snapshots in VirtualBox.xml von "/home/localadmin" auf das 
+    Heimatverzeichnis des angemeldeten Users geändert.
+Aufgerufen wird das script in /usr/share/linuxmuster-client/profile
+mit:
+<snip>
+ if test -f /usr/bin/virtualbox-vm-conf-kopieren.sh; then
+  /usr/bin/virtualbox-vm-conf-kopieren.sh 
+ fi
+<snap>
+Nach /usr/share/linuxmuster-client/VirtualBox wird auch das 
+Verzeichnis .VirtualBox im Heimatverzeichnis von "localadmin"
+symbolisch verlinkt. 
+Zusätzlicher Eintrag in /etc/security/group.conf 
+am Ende bei "*;*;*;A(...)scanner" von ",vboxusers".
+
+Die Snapshots liegen nun ebenfalls in der Partition für
+die virtuellen Festplatten (/virtual). Sollen diese zu
+anderen Rechnern mitgenommen werden, müüsen diese kopiert werden.
+Dazu muss aber die Basis der virtuellen Maschine gleich sein.
+
+Außerdem wurde ein reset-Button (Link) auf dem Desktop auf
+/usr/bin/virtualbox-vm-conf-reset.sh gelegt.
+Dieses Script kopiert die Konfigurationsdateien auch, wenn 
+schon welche vorhanden sind. Allerdings wird die Datei 
+VirtualBox.xml vorher weggesichert und danach wieder eingefügt,
+wodurch zusätzliche virtuelle Maschinen erhalten bleiben.
+
+UPDATE DES GASTES:
+Mit Änderung der Basis einer virtuellen Maschine müssen die
+Nutzer von eigenen Anpassungen informiert werden, dass die
+virtuelle Maschine resetet werden muss.
+Zur Suche des Snapshots "Standard-Juli2009" kann man folgenden 
+Befehlsansatz benutzen:
+#grep -R "Standard-Juli2009" /home/*
+...

@@ -1,0 +1,114 @@
+#!/usr/bin/perl -w
+# leoclient updater
+# $Id$
+# Programm to update scrips on a linux client
+# Licence: General Public Licence (GPL Version 3) 
+# Maintainer: jeffbeck-at-web-de
+
+
+use strict;
+use Getopt::Long;
+Getopt::Long::Configure ("bundling");
+use File::Basename;
+#use File::Path;
+use Term::ReadKey;
+
+
+############################################
+# config
+############################################
+
+my $perm_file_log="/root/allperm.log";
+my $perm_file_verify="/root/allperm.verify";
+
+my $help=0;
+my $verbose=0;
+my $prep=0;
+my $verify=0;
+
+# Parsen der Optionen
+my $testopt=GetOptions(
+           "help|h" => \$help,
+           "prep" => \$prep,
+           "verify" => \$verify,
+           "verbose|v+" => \$verbose,
+          );
+
+
+# Prüfen, ob Optionen erkannt wurden
+&check_options($testopt);
+
+if ($help==1){
+       print('
+leoclient-debug
+
+Options
+  -h  / --help
+  --prep  prepare for imaging
+  --prep  verify if all files are correct
+  
+
+');
+   print "\n";
+       exit;
+}
+
+
+
+
+
+
+if ($prep==1){
+    print "Preparing image ...\n";
+    print "Deleting history ... todo\n";
+    print "Deleting apt cache ... todo\n";
+    print "Remembering all files and permissions\n";
+    &perm_create($perm_file_log);
+    exit;
+}
+
+if ($verify==1){
+    #&perm_create($perm_file_verify);
+    my $diff_command="diff $perm_file_log $perm_file_verify";
+    print "$diff_command\n\n";
+    print "########## $perm_file_log  $perm_file_verify ####################\n";
+    system($diff_command);
+    print "########## $perm_file_log  $perm_file_verify ####################\n";
+    exit;
+
+}
+
+
+
+
+
+sub  check_options{
+   my ($parse_ergebnis) = @_;
+   if (not $parse_ergebnis==1){
+      my @list = split(/\//,$0);
+      my $scriptname = pop @list;
+      print "\nYou have made a mistake, when specifying options.\n"; 
+      print "See error message above. \n\n";
+      print "... $scriptname is terminating.\n\n";
+      exit;
+   } else {
+         #print "   * All options  were recognized.\n";
+   }
+}
+
+
+sub perm_create {
+    my ($file)=@_;
+    my $perm_command="find / \\( -path /proc -prune -o -path /home -prune -o ".
+                 "-path /sys -prune -o -path /tmp -prune ".
+                 "-o -path /usr/src -prune \\) -o ".
+                 "-printf \"%h/%f:::%M:::%u:::%g:::\n\" ".
+                 "> $file";
+    # avoid /proc, ...
+    print "$perm_command\n";
+    print "\nThis will take a minute or so ...\n\n";
+    system("$perm_command");
+    print "\n    ... done\n\n";
+}
+
+

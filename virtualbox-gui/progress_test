@@ -1,0 +1,452 @@
+#!/usr/bin/perl -w
+use strict;
+use Glib qw/TRUE FALSE/;
+use Gtk2 '-init';
+use utf8;
+use leovirtstarter;
+
+# config
+# auf client bzw. server wird in /etc/leovirtstarter/leovirtstarter.conf
+# so konfiguriert, dass es auf diesselebe Datei auf dem server verweist
+
+
+# Read configuration file
+my $conf="./leovirtstarter.conf";
+#my $conf="/etc/leovirtstarter/leovirtstarter.conf";
+
+# Einlesen der Konfigurationsdatei
+if (not -e $conf){
+    print "ERROR: $conf not found!\n";
+    exit;
+}
+{ package Conf ; do "$conf" 
+  || die "Fehler: leovirtstarter.conf could not be processed (syntax error?)\n" 
+}
+
+
+
+# Einlesen der Server Konfigurationsdatei
+if (not -e $Conf::common_configuration_file){
+    print "ERROR:  $Conf::common_configuration_file not found!\n";
+    exit;
+}
+{ package ServerConf ; do "$Conf::common_configuration_file" 
+  || die "Fehler:  \n  $Conf::common_configuration_file \ncould not be processed\n" 
+}
+
+
+&leovirtstarter::test();
+exit;
+
+# server script
+# the same binary as this (pm)
+#     A) zip all files
+#     B) store size zip and notzipped (and md5sum)
+#     C) rsync zipped files to a list of servers 
+# 
+# config ist nur auf dem server
+#  von server holen, falls vorhanden, sonst letzte Kopie nutzen
+
+
+########### $app_window ########################################################
+# +++++++++++++++++++++++++ $vbox ++++++++++++++++++++++++++++++++++++++++++++ #
+# + ######################## $ hbox ######################################## + #
+# + # +++ $hbox_starter ++++++++++++++ # +++++++ $hbox_hardware +++++++++  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # + ###### $vbox_hardware #####  +  # + #
+# + # +                              + # + ###### $hardware_grafik ###  +  # + #
+# + # +                              +   + #                         #  +  # + #
+# + # +                              + $ + #                         #  +  # + #
+# + # +                              + h + #                         #  +  # + #
+# + # +                              + b + #                         #  +  # + #
+# + # +                              + o + #                         #  +  # + #
+# + # +                              + x + ###########################  +  # + #
+# + # +                              + _ +                              +  # + #
+# + # +                              + s + ##### $hardware_hsep ######  +  # + #
+# + # +                              + e +                              +  # + #
+# + # +                              + p +                              +  # + #
+# + # +                              + e +                              +  # + #
+# + # +                              + r +                              +  # + #
+# + # +                              + a +                              +  # + #
+# + # +                              + t +                              +  # + #
+# + # +                              + o +                              +  # + #
+# + # +                              + r +                              +  # + #
+# + # +                              +   +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # +                              + # +                              +  # + #
+# + # ++++++++++++++++++++++++++++++++ # ++++++++++++++++++++++++++++++++  # + #
+# + ######################################################################## + #
+# +                                                                          + #
+# + ######################## $vbox_seperator ############################### + #
+# +                                                                          + #
+# + ######################## $align -> $progress_bar ####################### + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + #                                                                      # + #
+# + ######################################################################## + #
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+################################################################################
+
+# where to save selected radiobuttons
+my %selected=();
+
+# weiter
+# help grafik vervollständigen
+# programm darf nur 1x gestartet werden
+# wenns schon kopiert, dann fragen ob man abbrechen will, oder neue kopie starten
+
+
+# The following lists might be created automatically
+my $buttons_default="Windows XP Standard";
+my @buttons=("Windows XP Standard",
+             "Windows XP booten wie vorgefunden",
+             "Sys 3",
+             "Sys 4",
+             "Sys 5",
+             "Sys 6",
+             "Sys 7",
+             "Sys 8",
+             "Sys 9",
+             "Sys 10",
+             "Sys 11",
+             "Sys 12",
+             "Sys 13",
+             "Sys 14",
+             "Sys 15",
+            );
+
+
+my @grafik_buttons=("2D",
+                    "3D Beschleunigung",
+                    "3D und Video Beschleunigung");
+my $grafik_buttons_default="2D";
+
+
+my $ram_buttons_default="256 MB";
+my @ram_buttons=("256 MB",
+                 "512 MB ",
+                 "1024 MB");
+
+
+# create programm window: app_window
+my $app_window = Gtk2::Window->new('toplevel');
+$app_window->set_resizable(TRUE);
+$app_window->signal_connect(destroy => \&destroy_progress);
+$app_window->signal_connect('delete_event' => sub { Gtk2->main_quit; });
+$app_window->set_title("Virtuelles Windows starten");
+$app_window->set_border_width(0);
+# Fenstergroesse
+$app_window->set_size_request( 800, 600 );
+# zentrieren
+$app_window->set_position('center_always');
+
+############################################################
+# create vbox inside app_window and fill it:
+# hbox, vbox_seperator, align, progress_bar
+############################################################
+my $vbox = Gtk2::VBox->new(FALSE, 5);
+$vbox->set_border_width(20);
+$app_window->add($vbox);
+$vbox->show;
+
+# create hbox inside vbox
+my $hbox = Gtk2::HBox->new(FALSE, 5);
+$hbox->set_border_width(5);
+# insert hbox into vbox
+$vbox->add($hbox);
+#$vbox->pack_start($hbox, FALSE,FALSE,5);
+$hbox->show;
+
+# Create a centering alignment object;
+#$align = Gtk2::Alignment->new(0.5, 0.5, 0, 0);
+# 0.5: zentriert, 1: verfuegbarer platz voll nutzen
+
+# create vbox_separator  inside vbox
+my $vbox_separator = Gtk2::HSeparator->new;
+$vbox->pack_start($vbox_separator, FALSE, FALSE, 0);
+$vbox_separator->show;
+
+# create vbox_align inside vbox
+my $vbox_align = Gtk2::Alignment->new(0.5, 0.5, 1, 1);
+$vbox->pack_start($vbox_align, FALSE, FALSE, 5);
+$vbox_align->show;
+
+# create progressbar inside vbox
+my $progress_bar = Gtk2::ProgressBar->new;
+$app_window->{pbar} = $progress_bar;
+$vbox_align->add($progress_bar);
+$progress_bar->set_text('Kopiere Datei ...');
+# movement from left to right
+#$progress_bar->{activity_mode} = 0;
+# hin und her
+$progress_bar->{activity_mode} = 1;
+$progress_bar->show;
+# Add a timer callback to update the value of the progress bar
+$progress_bar->{timer} = Glib::Timeout->add(150, 
+                                            \&progress_timeout, 
+                                            $progress_bar);
+
+
+
+
+############################################################
+# create the starter box and fill it:
+# hbox_starter, hbox_seperator, $hbox_hardware
+############################################################
+
+# Chooser for the starter box
+my $hbox_starter = &starter_vbox();
+$hbox->add($hbox_starter);
+
+# was macht das???????
+#my $hbox_align = Gtk2::Alignment->new(0.5, 0.5, 0, 0);
+#$hbox->pack_start($hbox_align, FALSE, FALSE, 5);
+#$hbox_align->show;
+
+# Trennlinie in hbox
+my $hbox_seperator = Gtk2::VSeparator->new;
+$hbox->pack_start($hbox_seperator, TRUE, FALSE, 5);
+$hbox_seperator->show;
+
+
+# create vbox for hardware
+my $hbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$hbox_hardware->set_border_width(0);
+# insert vbox into window
+$hbox->add($hbox_hardware);
+$hbox_hardware->show;
+
+
+############################################################
+# add vbox_hardware inside hbox_hardware and fill it:
+# hardware_grafik, hardware_ram 
+############################################################
+
+############################################################
+# grafik radiobuttons
+############################################################
+# hardware_grafik
+my $vbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$vbox_hardware->set_border_width(0);
+$hbox_hardware->add($vbox_hardware);
+
+my $hardware_grafik = Gtk2::Frame->new();
+$hardware_grafik->set_shadow_type ('out');
+$hardware_grafik->set_border_width(10);
+$hardware_grafik->set_label("  Virtuelle Grafik:  ");
+$vbox_hardware->pack_start($hardware_grafik,TRUE,TRUE,5);
+$hardware_grafik->show;
+
+my $grafik_v_stock = Gtk2::VBox->new(FALSE,5);
+$grafik_v_stock->set_border_width(15);
+&create_radiobuttons("GRAFIK",
+                     $grafik_v_stock, 
+                     $grafik_buttons_default,
+                     @grafik_buttons);
+$hardware_grafik->add($grafik_v_stock);
+$vbox_hardware->show_all();
+
+
+############################################################
+# ram radiobuttons
+############################################################
+# hardware_ram
+$vbox_hardware = Gtk2::VBox->new(FALSE, 5);
+$vbox_hardware->set_border_width(0);
+$hbox_hardware->add($vbox_hardware);
+
+my $hardware_ram = Gtk2::Frame->new();
+$hardware_ram->set_shadow_type ('out');
+$hardware_ram->set_border_width(10);
+$hardware_ram->set_label("  Virtueller Arbeitsspeicher (RAM):  ");
+$vbox_hardware->pack_start($hardware_ram,TRUE,TRUE,5);
+$hardware_ram->show;
+
+my $ram_v_stock = Gtk2::VBox->new(FALSE,5);
+$ram_v_stock->set_border_width(15);
+&create_radiobuttons("RAM",
+                     $ram_v_stock, 
+                     $ram_buttons_default,
+                     @ram_buttons);
+$hardware_ram->add($ram_v_stock);
+$vbox_hardware->show_all();
+
+
+
+
+
+# rows, columns, homogeneous
+my $table = Gtk2::Table->new(2, 3, FALSE);
+$vbox->pack_start($table, FALSE, TRUE, 0);
+$table->show;
+
+$app_window->show;
+
+Gtk2->main;
+
+0;
+
+
+
+
+############################################################
+# subs
+############################################################
+
+sub starter_vbox {
+    # The starter Window
+    my $hand_cursor = Gtk2::Gdk::Cursor->new ('hand2');
+    #create a Gtk2::VBox to pack a Gtk2::Frame in. The frame will contain
+    #a Gtk2::ScrolledWindow, which in turn will contain a Gtk2::VBox full
+    #of Gtk2::Buttons
+    my $sw;
+    my $vbox = Gtk2::VBox->new(FALSE,5);
+    my $frame = Gtk2::Frame->new();
+    $frame->set_shadow_type ('out');
+    #method of Gtk2::Container
+    $frame->set_border_width(2);
+    $frame->set_label("  Wählen Sie das virtuelle Windows aus:  ");
+    $sw = Gtk2::ScrolledWindow->new (undef, undef);
+    $sw->set_shadow_type ('etched-out');
+    $sw->set_policy ('never', 'automatic');
+    #This is a method of the Gtk2::Widget class,it will force a minimum 
+    #size on the widget. Handy to give intitial size to a 
+    #Gtk2::ScrolledWindow class object
+    $sw->set_size_request (300, 500);
+    #method of Gtk2::Container
+    $sw->set_border_width(10);
+    #create a vbox that will contain all the stock buttons
+    my $vbox_stock = Gtk2::VBox->new(FALSE,5);
+    $vbox_stock->set_border_width(10);
+    &create_radiobuttons("SYSTEM",
+                         $vbox_stock, 
+                         $buttons_default,
+                         @buttons);
+    # add the vbox with all the stock buttons	
+    $sw->add_with_viewport($vbox_stock);
+    $frame->add($sw); 
+    #$frame->add($vbox_stock);
+    $vbox->pack_start($frame,TRUE,TRUE,4);
+
+    # add the big start button
+    my $start_button = Gtk2::Button->new("Starten!");
+    $start_button->set_alignment (0.5, 0.5);
+    $start_button->signal_connect(clicked => \&start_button, $start_button);
+    $vbox->pack_start($start_button, FALSE, FALSE, 0);
+    $start_button->show;
+    $vbox->show_all();
+    return $vbox;
+}
+
+
+sub progress_timeout
+{
+	my $progress_bar = shift;
+	if ($progress_bar->{activity_mode})
+	{
+		$progress_bar->pulse;
+	}
+	else
+	{
+		# Calculate the value of the progress bar using the
+		# value range set in the adjustment object
+		my $new_val = $progress_bar->get_fraction() + 0.01;
+		
+                if ($new_val > 1.0){
+                    $progress_bar->set_text('Entpacke  ...');
+                    $new_val = 0.0;
+                }
+		#$new_val = 0.0 if $new_val > 1.0;
+		#$progress_bar->set_text('Entpacke  ...') if $new_val > 1.0;
+		
+		# Set the new value
+		$progress_bar->set_fraction($new_val);
+	}
+
+	# As this is a timeout function, return TRUE so that it
+	# continues to get called
+	return TRUE;
+}
+
+# Remove the timer
+sub destroy_progress
+{
+	my $app_window = shift;
+
+	Glib::Source->remove($app_window->{pbar}->{timer});
+	Gtk2->main_quit;
+}
+
+
+# The big start button
+sub start_button {
+    my ($window, $name) = @_;
+    # what to start
+    print "RAM:    $selected{'RAM'}\n";
+    print "GRAFIK: $selected{'GRAFIK'}\n";
+    print "SYSTEM: $selected{'SYSTEM'}\n";
+    # check if existing file is OK
+       # copy
+       # copy not needed
+    
+
+
+    
+
+}
+
+
+
+sub create_radiobuttons {
+    # string under which to save selected value in %selected
+    # widget to which radiobuttons will be added
+    # default button ('no button' = do not show a default button)
+    # more buttons
+    my ($type,$radio_box,$default,@buttons) = @_;
+    $selected{$type}=$default;
+    my @radiobutton;
+    my @group;
+
+    my $i=0;
+    # add the buttons from the list
+    foreach my $button ( @buttons ){
+        # $button: dirname
+        # $snaphots{$button}
+        #my $displayname="---";
+        #if (exists $snapshots{$button}{'name'}){
+        #    $displayname=$snapshots{$button}{'name'};
+        #} else {
+        #    $displayname=$button;
+        #}
+        #if (exists $snapshots{$button}{'maintainer'}){
+        #    $displayname=$displayname.
+        #        " (".$snapshots{$button}{'maintainer'}.")";
+        #}
+        if ($i==0){
+            # this is the first button
+            $radiobutton[$i] = Gtk2::RadioButton->new(undef, $button);
+#            $radio_box->pack_start($radiobutton[0], TRUE, TRUE, 0);
+            $radio_box->pack_start($radiobutton[0], FALSE, TRUE, 5);
+            $radiobutton[$i]->signal_connect (clicked => sub {
+                   ($selected{$type} = $button); 
+                  });
+            $radiobutton[$i]->show;
+        } else {
+            # just another button
+            @group = $radiobutton[0]->get_group;
+            $radiobutton[$i] = Gtk2::RadioButton->new_with_label(@group,
+                                                                 "$button");
+            $radiobutton[$i]->set_active(FALSE);
+            # $radiobutton[$i]->signal_connect (clicked => sub {
+            # ($radiobutton[$i]->get_active) and ($selected_system = $button); 
+            $radiobutton[$i]->signal_connect (clicked => sub {
+                         ($selected{$type} = $button); 
+                  });
+            $radio_box->pack_start($radiobutton[$i],FALSE,FALSE,4);
+        }
+        $i++;
+    }
+}
