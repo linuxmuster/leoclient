@@ -3,7 +3,7 @@ Verzeichnis 'Daten' hat bei allen Schulen denselben Namen
 
 Wo dürfen Nachrichten abgespeichert werden:
 
-$HOME/Daten
+Nur in $HOME/Daten, sonst gehen Sie verloren!
 
 Warnung soll angezeigt werden, wenn 
    - in $HOME abgespeichert werden soll
