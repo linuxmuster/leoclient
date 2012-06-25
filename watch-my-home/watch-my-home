@@ -1,0 +1,167 @@
+#!/usr/bin/perl -w
+# $Id$
+# This Script (watch-my-home) was created by Rüdiger Beck
+# It is released under the GPL Version 3
+# For Bugs send mail to:
+# jeffbeck@web.de
+
+# todo
+# let a widow pop up
+# skip some dirs
+# skip dotfiles
+
+
+# Bibliotheken
+use strict;
+# aptitude install liblinux-inotify2-perl liblog-log4perl-perl
+use Linux::Inotify2;
+use File::Basename;
+use File::Copy;
+use File::Path;
+# use log names of perl variables, i.e. $UID
+use English;
+use Log::Log4perl qw(:easy);
+# configure logging
+my $log="/tmp/watch-my-home.log";
+my $script="watch-my-home";
+# allow everybody to log int the logfile
+umask 000;
+Log::Log4perl->easy_init({ 
+                level   => $DEBUG,
+                file    => ">>$log" } );    
+
+my $home=$ENV{'HOME'};
+my $UID_name=getpwuid($UID);
+my $EUID_name=getpwuid($EUID);
+my ($GID_name)=getgrgid($GID);
+my ($EGID_name)=getgrgid($EGID);
+
+INFO "##################################################";
+INFO "$script started (pid=$PROCESS_ID)";
+&kill_other_scripts();
+INFO "\$HOME: $home";
+INFO "UID:  $UID_name ($UID)\n";
+INFO "EUID: $EUID_name ($EUID)\n";
+INFO "GID:  $GID_name ($GID)\n";
+INFO "EGID: $EGID_name ($EGID)\n";
+
+############################################################
+# Configuration
+############################################################
+# dir to watch (must be directory)
+my $dir=$home;
+my $new_home_file="/tmp/heimatverzeichnis";
+
+############################################################
+# Script
+############################################################
+### Define an Inotify2 instance
+INFO "Watching:   $dir \n";
+if (not -e $dir){
+    INFO "Watching $dir does not exist";
+    exit;
+}
+
+# works
+my $inotify = new Linux::Inotify2
+or die "Unable to create new inotify object: $!";
+$inotify->watch ( $dir, IN_CREATE)
+or die "watch creation failed";
+
+
+
+
+my $kidpid = fork();
+my $dead_kid=0;
+if (not defined $kidpid) {
+    print "No resources\n";
+} elsif ($kidpid == 0) {
+    INFO "Child process started with pid $PROCESS_ID";
+    &watcher();
+} else {
+    INFO "Parent process started with pid $PROCESS_ID";
+    &user_change();
+    # do not wait for child, kill it
+    &kill_other_scripts();
+    # wait for child
+    #my $dead_kid = waitpid($kidpid,0);
+    INFO "Parent process will end now";
+}
+
+
+
+sub watcher {
+    while() {
+        my @events = $inotify->read;
+        unless ( @events > 0 ) {
+            print "read error: $!";
+            last;
+        }
+        foreach( @events ) {
+            my $abs_path=$_->fullname;
+            # path rel to home
+            my $home_path=$abs_path;
+            $home_path=~s/$home\///;
+
+            if (-f $abs_path){
+                # Do something with the file ??????????????
+                INFO "File created:     $abs_path ($home_path)\n";
+            } else{
+              # Do something with the dir ??????????????
+                INFO "Dir created:     $abs_path ($home_path)\n";
+  
+            }
+        }
+    }
+}
+
+
+
+sub user_change{
+    while (){
+        if (-e "$new_home_file"){
+            my $new_home=&get_new_home();
+            #INFO "Userchange($PROCESS_ID): $new_home ($home)";
+            if ($new_home ne $home){
+                INFO "Userchange($PROCESS_ID): user has changed -> terminate";
+                return;
+            } else {
+                # INFO "Userchange($PROCESS_ID): user unchanged -> waiting";
+            }
+        } else {
+            INFO "Userchange($PROCESS_ID): cannot read $new_home_file";
+        }
+        sleep 5;
+    }
+}
+
+
+
+
+
+
+sub kill_other_scripts {    
+    INFO "Killing all other scripts:";
+    my $pid_string=`pgrep -f $script`;
+    my (@pids) = split("\n",$pid_string);
+    foreach my $pid (@pids){
+        if (not $pid==$PROCESS_ID){
+            my $string=`ps -o cmd= -p $pid`;
+            if ($string=~/perl/){
+                # make sure its the script
+                INFO "Killing $script with $pid";
+                system("kill $pid && echo '   ---> Killed succesfully' >> $log || echo '   ---> ERROR killing $pid' >> $log");
+            } else {
+                INFO "NOT Killing $string";
+            }
+        }
+    }
+}
+
+
+
+sub get_new_home{
+    my $new_home=`cat $new_home_file`;
+    chomp($new_home);
+    return $new_home;
+}
