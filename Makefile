@@ -15,13 +15,6 @@ INIT=$(DESTDIR)/etc/init.d
 # where is the start script linked
 START=$(DESTDIR)/etc/rc2.d/S99leoclient
 
-
-LOG1=/var/log/auth.log
-LOG2=/var/log/gdm/:0-slave.log
-LOG3=/var/log/gdm/:0.log
-LOG4=/var/log/gdm/:0-greeter.log
-
-
 help:
 	@echo ' '
 	@echo 'Most common options of this Makefile:'
@@ -87,16 +80,16 @@ help:
 
 
 
-leoclient:
-	@echo '   * Installing leoclient scripts'
-	@install -d -m0755 -oroot -groot $(INIT)
-	@install -oroot -groot --mode=0755 updater/leoclient-updater $(INIT)
-	@rm -f $(START)
-	@# link to script in runlevel dir
-	@ln -s $(INIT)/leoclient-updater $(START)
-	@# link to execute script /usr/bin/leoclient-updater
-	@rm -f $(BIN)/leoclient-updater
-	@ln -s $(INIT)/leoclient-updater $(BIN)/leoclient-updater
+#leoclient:
+#	@echo '   * Installing leoclient scripts'
+#	@install -d -m0755 -oroot -groot $(INIT)
+#	@install -oroot -groot --mode=0755 updater/leoclient-updater $(INIT)
+#	@rm -f $(START)
+#	@# link to script in runlevel dir
+#	@ln -s $(INIT)/leoclient-updater $(START)
+#	@# link to execute script /usr/bin/leoclient-updater
+#	@rm -f $(BIN)/leoclient-updater
+#	@ln -s $(INIT)/leoclient-updater $(BIN)/leoclient-updater
 
 
 
@@ -104,11 +97,36 @@ all: vbox printer it oo icons sd bios lm
 	@echo 'Everything installed'
 
 
+# packages
+############################################################
+package-vbox-client: vbox leovirtstarter-common leovirtstarter-client printer-virtual  
+	@echo 'Install vbox'
+
+package-vbox-server: leovirtstarter-common leovirtstarter-server 
+	@echo 'Install vbox'
+
+
+package-default-printer: printer-default
+	@echo 'Install default printer'
+
+package-italc: it
+	@echo 'Install italc stuff'
+
+package-shutdown: sd
+	@echo 'Install shutdown stuff'
+
+package-icons: icons
+	@echo 'Install icon script'
+
+
+
+
+# tools
+############################################################
 vbox:
 	@echo '   * Installing vbox scripts'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopieren.sh $(VBOXDIR)
-
 
 leovirtstarter-client:
 	@echo '   * Installing the client script'
@@ -180,10 +198,10 @@ sd:
 
 
 
-oo:
-	@echo '   * Installing openoffice stuff'
-	@install -d -m0755 -oroot -groot $(BIN)
-	@install -oroot -groot --mode=0755 openoffice-vorlagen/openoffice-vorlagenverz-kopieren.sh $(BIN)
+#lo:
+#	@echo '   * Installing libreoffice stuff'
+#	@install -d -m0755 -oroot -groot $(BIN)
+#	@install -oroot -groot --mode=0755 openoffice-vorlagen/openoffice-vorlagenverz-kopieren.sh $(BIN)
 
 icons:
 	@echo '   * Installing desktop icons'
@@ -191,10 +209,10 @@ icons:
 	@install -oroot -groot --mode=0755 desktop-icons/desktop-icons-hinzu.sh $(BIN)
 
 
-bios:
-	@echo '   * Installing biostime script (todo)'
-	@install -d -m0755 -oroot -groot $(BIN)
-	@#@install -oroot -groot --mode=0755 bios/bios???.sh $(BIN)
+#bios:
+#	@echo '   * Installing biostime script (todo)'
+#	@install -d -m0755 -oroot -groot $(BIN)
+#	@#@install -oroot -groot --mode=0755 bios/bios???.sh $(BIN)
 
 
 lm:
@@ -204,28 +222,8 @@ lm:
 	@@install -oroot -groot --mode=0755 linuxmuster/umount.sh $(SHARE)
 	@@install -oroot -groot --mode=0644 linuxmuster/profile $(SHARE)
 
-debug2:
-	@echo '   * Install debug scripts'
-	@install -d -m0755 -oroot -groot $(SBIN)
-	@install -oroot -groot --mode=0755  debug/leoclient-debug $(SBIN)
-
-clearlog:
-	@echo '   * Clearing logfiles'
-	@rm $(LOG1)
-	@touch $(LOG1)
-	@chmod 640 $(LOG1)
-
-	@rm $(LOG2)
-	@touch $(LOG2)
-	@chmod 644 $(LOG2)
-
-	@rm $(LOG3)
-	@touch $(LOG3)
-	@chmod 644 $(LOG3)
-
-	@rm $(LOG4)
-	@touch $(LOG4)
-	@chmod 644 $(LOG4)
-
-
+#debug2:
+#	@echo '   * Install debug scripts'
+#	@install -d -m0755 -oroot -groot $(SBIN)
+#	@install -oroot -groot --mode=0755  debug/leoclient-debug $(SBIN)
 
