@@ -100,23 +100,22 @@ all: vbox printer it oo icons sd bios lm
 # packages
 ############################################################
 package-vbox-client: vbox leovirtstarter-common leovirtstarter-client printer-virtual  
-	@echo 'Install vbox'
+	@echo 'Install vbox done'
 
 package-vbox-server: leovirtstarter-common leovirtstarter-server 
-	@echo 'Install vbox'
-
+	@echo 'Install vbox done'
 
 package-default-printer: printer-default
-	@echo 'Install default printer'
+	@echo 'Install default printer done'
 
 package-italc: it
-	@echo 'Install italc stuff'
+	@echo 'Install italc stuff done'
 
 package-shutdown: sd
-	@echo 'Install shutdown stuff'
+	@echo 'Install shutdown stuff done'
 
 package-icons: icons
-	@echo 'Install icon script'
+	@echo 'Install icon script done'
 
 
 
@@ -176,8 +175,8 @@ printer-virtual:
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-splitter $(BIN)
 	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-spooler $(BIN)
-	# nicht mehr erforderlich Ersetzt durch: ausdruck-winxp-splitter/ausdruck-winxp-spooler
-	#@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
+# nicht mehr erforderlich Ersetzt durch: ausdruck-winxp-splitter/ausdruck-winxp-spooler
+#@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
 
 printer-default:
 	@echo '   * Installing printer scripts'
