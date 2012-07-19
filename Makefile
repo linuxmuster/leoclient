@@ -48,7 +48,10 @@ help:
 	@echo '   make leovirtstarter-server'
 	@echo '      install preparation script on server'
 	@echo ' '
-	@echo '   make printer'
+	@echo '   make printer-virtual'
+	@echo '      install printer files/scripts'
+	@echo ' '
+	@echo '   make printer-default'
 	@echo '      install printer files/scripts'
 	@echo ' '
 	@echo '   make it'
@@ -150,13 +153,18 @@ clean:
 
 
 
-printer:
+printer-virtual:
+	@echo '   * Installing printer scripts'
+	@install -d -m0755 -oroot -groot $(BIN)
+	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-splitter $(BIN)
+	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-spooler $(BIN)
+	# nicht mehr erforderlich Ersetzt durch: ausdruck-winxp-splitter/ausdruck-winxp-spooler
+	#@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
+
+printer-default:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 standarddrucker/standarddrucker-nach-raum.sh $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-splitter $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-spooler $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
 
 
 it:
