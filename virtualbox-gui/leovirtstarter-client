@@ -1,5 +1,4 @@
 #!/usr/bin/perl -w
-# aptitude install libfilesys-df-perl liblog-log4perl-perl
 
 use strict;
 use Glib qw/TRUE FALSE/;

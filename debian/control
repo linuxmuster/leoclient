@@ -20,7 +20,7 @@ Package: leovirtstarter-client
 Architecture: all
 Suggests: 
 Pre-Depends: leovirtstarter-common
-Depends:  
+Depends: libfilesys-df-perl liblog-log4perl-perl
 Description: alternativ software to start VirtualBox
  leovirtstarter-client copies and caches VirtualBox snapshots and starts
  them
@@ -30,9 +30,18 @@ Package: leovirtstarter-server
 Architecture: all
 Suggests: 
 Pre-Depends:
-Depends:  leovirtstarter-common
+Depends: leovirtstarter-common
 Description: prepares snapshots for leovirtstarter-client 
  leovirtstarter-server compresses snapshots and determines theis sizes and 
  syncs them to other servers
+
+
+Package: leoclient-watch-my-home
+Architecture: all
+Suggests: 
+Pre-Depends:
+Depends: liblinux-inotify2-perl liblog-log4perl-perl
+Description: watches the home directory of a user and shows errors when
+ files or dirs are created outside a specific server directory
 
 

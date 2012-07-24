@@ -13,7 +13,6 @@
 
 # Bibliotheken
 use strict;
-# aptitude install liblinux-inotify2-perl liblog-log4perl-perl
 use Linux::Inotify2;
 use File::Basename;
 use File::Copy;
@@ -22,12 +21,12 @@ use File::Path;
 use English;
 use Log::Log4perl qw(:easy);
 # configure logging
-my $log="/tmp/watch-my-home.log";
-my $script="watch-my-home";
+my $log="/tmp/leoclient-watch-my-home.log";
+my $script="leoclient-watch-my-home";
 # allow everybody to log int the logfile
 umask 000;
 Log::Log4perl->easy_init({ 
-                level   => $DEBUG,
+                level   => $INFO,
                 file    => ">>$log" } );    
 
 my $home=$ENV{'HOME'};
@@ -35,6 +34,14 @@ my $UID_name=getpwuid($UID);
 my $EUID_name=getpwuid($EUID);
 my ($GID_name)=getgrgid($GID);
 my ($EGID_name)=getgrgid($EGID);
+
+my $config_file = "/etc/leoclient/leoclient-watch-my-home.conf";
+{package WatchConf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
+
+my $no_warning_abs=$home."/".$WatchConf::no_warning_dir;
+print "Saving in $WatchConf::no_warning_dir is OK\n";
+print "Logfile is $log\n";
+
 
 INFO "##################################################";
 INFO "$script started (pid=$PROCESS_ID)";
@@ -106,9 +113,12 @@ sub watcher {
             if (-f $abs_path){
                 # Do something with the file ??????????????
                 INFO "File created:     $abs_path ($home_path)\n";
-            } else{
+            } elsif (-d $abs_path){
               # Do something with the dir ??????????????
                 INFO "Dir created:     $abs_path ($home_path)\n";
+            } else{
+              # Do something with the non-dir, non-file
+                INFO "Something created:     $abs_path ($home_path)\n";
   
             }
         }
