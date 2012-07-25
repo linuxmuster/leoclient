@@ -42,7 +42,7 @@ help:
 	@echo '   make leovirtstarter-server'
 	@echo '      install preparation script on server'
 	@echo ' '
-	@echo '   make watch-my-home'
+	@echo '   make install-watch-my-home'
 	@echo '      install script to trigger alarm, when files/dirs are saved outside a dir'
 	@echo ' '
 	@echo '   make printer-virtual'
@@ -158,7 +158,7 @@ leovirtstarter-common:
 	@install -d -m755 -oroot -groot $(PERLMOD)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter.pm $(PERLMOD)
 
-zwatch-my-home:
+install-watch-my-home:
 	@echo '   * Installing the script leoclient-watch-my-home'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 watch-my-home/leoclient-watch-my-home $(VBOXDIR)

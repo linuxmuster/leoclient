@@ -13,6 +13,8 @@
 
 # Bibliotheken
 use strict;
+use Glib qw/TRUE FALSE/;
+use Gtk2 '-init';
 use Linux::Inotify2;
 use File::Basename;
 use File::Copy;
@@ -111,14 +113,44 @@ sub watcher {
             $home_path=~s/$home\///;
 
             if (-f $abs_path){
-                # Do something with the file ??????????????
+                # Do something with the file
                 INFO "File created:     $abs_path ($home_path)\n";
-            } elsif (-d $abs_path){
-              # Do something with the dir ??????????????
+  	        &show_message_dialog(undef,
+                   "error",
+                   "Sie haben eine Datei ausserhalb von $WatchConf::no_warning_dir gespeichert.\n\n".
+                   "Bitte beachten Sie, dass diese Datei nach dem Abmelden gelöscht wird!\n\n".
+                   "Wenn Sie diese Datei auf dem Server dauerhaft abspeichern wollen, ".
+                   "müssen Sie sie in $WatchConf::no_warning_dir speichern.\n",
+                   'ok');
+            } elsif (-l $abs_path){
+              # Do something with the link
                 INFO "Dir created:     $abs_path ($home_path)\n";
+  	        &show_message_dialog(undef,
+                   "error",
+                   "Sie haben einen Linkausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
+                   "Bitte beachten Sie, dass dieser Link nach dem Abmelden gelöscht wird!\n\n".
+                   "Wenn Sie den Link auf dem Server dauerhaft abspeichern wollen, ".
+                   "müssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
+                   'ok');
+            } elsif (-d $abs_path){
+              # Do something with the dir
+                INFO "Dir created:     $abs_path ($home_path)\n";
+  	        &show_message_dialog(undef,
+                   "error",
+                   "Sie haben einen Ordner ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
+                   "Bitte beachten Sie, dass dieser Ordner mit seinem Inhalt nach dem Abmelden gelöscht wird!\n\n".
+                   "Wenn Sie den Ordner und seinen Inhalt auf dem Server dauerhaft abspeichern wollen, ".
+                   "müssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
+                   'ok');
             } else{
-              # Do something with the non-dir, non-file
+              # Do something with the non-dir, non-file, non-link
                 INFO "Something created:     $abs_path ($home_path)\n";
+  	        &show_message_dialog(undef,
+                   "error",
+                   "Sie haben etwas ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
+                   "Bitte beachten Sie, dass es dort nach dem Abmelden gelöscht wird!\n\n".
+                   "Dauerhaft zu speichernde Dinge müssen nach $WatchConf::no_warning_dir gespeichert werden.\n",
+                   'ok');
   
             }
         }
@@ -175,3 +207,43 @@ sub get_new_home{
     chomp($new_home);
     return $new_home;
 }
+
+
+
+sub show_message_dialog {
+    #THIS IS THE MAIN FEATURE OF THE APP:
+    #you tell it what to display, and how to display it
+    #$parent is the parent window, or "undef"
+    #$icon can be one of the following:	a) 'info'
+    #					b) 'warning'
+    #					c) 'error'
+    #					d) 'question'
+    #$text can be pango markup text, or just plain text, IE the message
+    #$button_type can be one of the following: 	a) 'none'
+    #						b) 'ok'
+    #						c) 'close'
+    #						d) 'cancel'
+    #						e) 'yes-no'
+    #						f) 'ok-cancel'
+
+    my ($parent,$icon,$text,$button_type) = @_;
+ 
+    my $dialog = Gtk2::MessageDialog->new_with_markup (undef,
+					[qw/modal destroy-with-parent/],
+					"warning",
+					"close",
+					sprintf "$text");
+#    my $dialog = Gtk2::MessageDialog->new_with_markup ($parent,
+#					[qw/modal destroy-with-parent/],
+#					$icon,
+#					$button_type,
+#					sprintf "$text");
+		
+    # this will typically return certain values depending on the 
+    # value of $retval.
+    # in this application, we only change the label's value accordingly
+    my $retval = $dialog->run;
+    #destroy the dialog as it comes out of the 'run' loop	
+    $dialog->destroy;
+}
+
