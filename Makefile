@@ -155,18 +155,23 @@ leoclient-printer-default:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 printer/standarddrucker-nach-raum.sh $(BIN)
+	@install -d -m755 -oroot -groot $(LEOCLIENTCONF)
+	@install -oroot -groot --mode=0644 printer/leoclient-printer-default.conf  $(LEOCLIENTCONF)
 
 
 leoclient-italc:
 	@echo '   * Installing italc scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 italc/italc-raumanpassung.sh $(BIN)
+	@install -d -m755 -oroot -groot $(LEOCLIENTCONF)
+	@install -oroot -groot --mode=0644 italc/leoclient-italc.conf  $(LEOCLIENTCONF)
+
 
 leoclient-shutdown:
+# no config file
 	@echo '   * Installing shutdown script (without cronjob entry)'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 shutdown/herunterfahren.sh $(BIN)
-
 
 
 
