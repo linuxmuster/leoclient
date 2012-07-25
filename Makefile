@@ -24,53 +24,32 @@ help:
 	@echo '   make help'
 	@echo '      show this help'
 	@echo ' '
-	@echo '   make leoclient'
-	@echo '      install the boot mechanism that updates the rest'
-	@echo ' '
-	@echo '   make all'
-	@echo '      install all (but not the leoclient-updater)'
-	@echo ' '
-	@echo '   make vbox'
-	@echo '      install virtualbox'
-	@echo ' '
-	@echo '   make leovirtstarter-common'
-	@echo '      install common files for leovirtstarter-client/server '
-	@echo ' '
-	@echo '   make leovirtstarter-client'
+	@echo '   make leoclient-leovirtstarter-client'
 	@echo '      install virtualbox gui to start machines'
 	@echo ' '
-	@echo '   make leovirtstarter-server'
+	@echo '   make leoclient-leovirtstarter-server'
 	@echo '      install preparation script on server'
 	@echo ' '
-	@echo '   make install-watch-my-home'
+	@echo '   make leoclient-leovirtstarter-common'
+	@echo '      install common files for leovirtstarter-client and leovirtstarter-server '
+	@echo ' '
+	@echo '   make leoclient-watch-my-home'
 	@echo '      install script to trigger alarm, when files/dirs are saved outside a dir'
 	@echo ' '
-	@echo '   make printer-virtual'
-	@echo '      install printer files/scripts'
+	@echo '   make leoclient-printer-virtual'
+	@echo '      install pdf-file splitter and spooler'
 	@echo ' '
-	@echo '   make printer-default'
-	@echo '      install printer files/scripts'
+	@echo '   make leoclient-printer-default'
+	@echo '      install set default printer script'
 	@echo ' '
-	@echo '   make it'
-	@echo '      install italc'
+	@echo '   make leoclient-italc'
+	@echo '      install italc stuff'
 	@echo ' '
-	@echo '   make oo'
-	@echo '      install oo'
-	@echo ' '
-	@echo '   make icons'
-	@echo '      install desktop icons'
-	@echo ' '
-	@echo '   make shutdown'
+	@echo '   make leoclient-shutdown'
 	@echo '      install shutdown script'
 	@echo ' '
-	@echo '   make bios'
-	@echo '      install biostime script'
-	@echo ' '
-	@echo '   make lm'
-	@echo '      install profile, mount.sh and umount.sh'
-	@echo ' '
-	@echo '   make debug'
-	@echo '      install debug scripts on this host'
+	@echo '   make leoclient-icon-script'
+	@echo '      install scripts to sync desktop icons'
 	@echo ' '
 	@echo '   make clearlog'
 	@echo '      clear logfiles on this host'
@@ -97,41 +76,19 @@ help:
 
 
 
-all: vbox printer it oo icons sd bios lm
-	@echo 'Everything installed'
-
-
-# packages
-############################################################
-package-vbox-client: vbox leovirtstarter-common leovirtstarter-client printer-virtual  
-	@echo 'Install vbox done'
-
-package-vbox-server: leovirtstarter-common leovirtstarter-server 
-	@echo 'Install vbox done'
-
-package-default-printer: printer-default
-	@echo 'Install default printer done'
-
-package-italc: it
-	@echo 'Install italc stuff done'
-
-package-shutdown: sd
-	@echo 'Install shutdown stuff done'
-
-package-icons: icons
-	@echo 'Install icon script done'
-
+default: 
+	@echo 'Doing Nothing'
 
 
 
 # tools
 ############################################################
-vbox:
-	@echo '   * Installing vbox scripts'
-	@install -d -m0755 -oroot -groot $(VBOXDIR)
-	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopieren.sh $(VBOXDIR)
+#vbox:
+#	@echo '   * Installing vbox scripts'
+#	@install -d -m0755 -oroot -groot $(VBOXDIR)
+#	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopiere#n.sh $(VBOXDIR)
 
-leovirtstarter-client:
+leoclient-leovirtstarter-client:
 	@echo '   * Installing the client script'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox-gui/leovirtstarter-client $(VBOXDIR)
@@ -139,9 +96,12 @@ leovirtstarter-client:
 	@install -d -m755 -oroot -groot $(VIRTCONF)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter.conf  $(VIRTCONF)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-onthego.conf  $(VIRTCONF)
+	@echo '   * Installing vbox scripts'
+	@install -d -m0755 -oroot -groot $(VBOXDIR)
+	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopieren.sh $(VBOXDIR)
 
 
-leovirtstarter-server:
+leoclient-leovirtstarter-server:
 	@echo '   * Installing the server script'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox-gui/leovirtstarter-server $(VBOXDIR)
@@ -150,7 +110,7 @@ leovirtstarter-server:
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-server.conf  $(VIRTCONF)
 
 
-leovirtstarter-common:
+leoclient-leovirtstarter-common:
 	@echo '   * Installing the common configuration file'
 	@install -d -m755 -oroot -groot $(VIRTCONF)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter.conf  $(VIRTCONF)
@@ -158,7 +118,7 @@ leovirtstarter-common:
 	@install -d -m755 -oroot -groot $(PERLMOD)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter.pm $(PERLMOD)
 
-install-watch-my-home:
+leoclient-watch-my-home:
 	@echo '   * Installing the script leoclient-watch-my-home'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 watch-my-home/leoclient-watch-my-home $(VBOXDIR)
@@ -174,7 +134,7 @@ deb:
 	@sleep 8
 	dpkg-buildpackage -tc -uc -us -sa -rfakeroot
 	@echo ''
-	@echo 'Do not forget to tag this version in mercurial'
+	@echo 'Do not forget to tag this version in git'
 	@echo ''
 
 clean:
@@ -182,7 +142,7 @@ clean:
 
 
 
-printer-virtual:
+leoclient-printer-virtual:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-splitter $(BIN)
@@ -190,18 +150,18 @@ printer-virtual:
 # nicht mehr erforderlich Ersetzt durch: ausdruck-winxp-splitter/ausdruck-winxp-spooler
 #@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
 
-printer-default:
+leoclient-printer-default:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 standarddrucker/standarddrucker-nach-raum.sh $(BIN)
 
 
-it:
+leoclient-italc:
 	@echo '   * Installing italc scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 italc/italc-raumanpassung.sh $(BIN)
 
-sd:
+leoclient-shutdown:
 	@echo '   * Installing shutdown script (without cronjob entry)'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 shutdown/herunterfahren.sh $(BIN)
@@ -214,7 +174,7 @@ sd:
 #	@install -d -m0755 -oroot -groot $(BIN)
 #	@install -oroot -groot --mode=0755 openoffice-vorlagen/openoffice-vorlagenverz-kopieren.sh $(BIN)
 
-icons:
+leoclient-icon-script:
 	@echo '   * Installing desktop icons'
 	@install -d -m0755 -oroot -groot $(BIN)
 	@install -oroot -groot --mode=0755 desktop-icons/desktop-icons-hinzu.sh $(BIN)

@@ -7,7 +7,6 @@
 
 # Bibliotheken
 use strict;
-# aptitude install liblinux-inotify2-perl liblog-log4perl-perl
 use Linux::Inotify2;
 use File::Basename;
 use File::Copy;
