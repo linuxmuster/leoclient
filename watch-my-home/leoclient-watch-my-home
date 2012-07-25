@@ -127,7 +127,7 @@ sub watcher {
                 INFO "Dir created:     $abs_path ($home_path)\n";
   	        &show_message_dialog(undef,
                    "error",
-                   "Sie haben einen Linkausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
+                   "Sie haben einen Link ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
                    "Bitte beachten Sie, dass dieser Link nach dem Abmelden gelöscht wird!\n\n".
                    "Wenn Sie den Link auf dem Server dauerhaft abspeichern wollen, ".
                    "müssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
