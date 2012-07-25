@@ -6,9 +6,9 @@
 # jeffbeck@web.de
 
 # todo
-# let a widow pop up
 # skip some dirs
-# skip dotfiles
+# pop warning also on renames
+# Nachteil: kurzzeitig ist das Programm aus
 
 
 # Bibliotheken
@@ -113,7 +113,11 @@ sub watcher {
             my $home_path=$abs_path;
             $home_path=~s/$home\///;
 
-            if (-f $abs_path){
+            print "Home_Path: $home_path\n";
+            if ( $home_path=~/^\..*/ ){
+                # do nothin with dotfiles
+                print "$abs_path is a dotfile\n";
+            } elsif (-f $abs_path){
                 # Do something with the file
                 INFO "File created:     $abs_path ($home_path)\n";
   	        &show_message_dialog(undef,
@@ -237,8 +241,6 @@ sub show_message_dialog {
     # this will typically return certain values depending on the 
     # value of $retval.
     # in this application, we only change the label's value accordingly
-
-
     my $response = $dialog->run;
     print "Antwort: $response";
     $dialog->destroy; # tut nicht
