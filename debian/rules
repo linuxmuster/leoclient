@@ -56,6 +56,7 @@ install: build
 	$(MAKE) leovirtstarter-common DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) leovirtstarter-client DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) leovirtstarter-server DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) install-watch-my-home DESTDIR=$(CURDIR)/debian/leoclient
 
 # Build architecture-independent files here.
 binary-indep: build install
