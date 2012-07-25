@@ -145,15 +145,15 @@ clean:
 leoclient-printer-virtual:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-splitter $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp-spooler $(BIN)
+	@install -oroot -groot --mode=0755 printer/ausdruck-winxp-splitter $(BIN)
+	@install -oroot -groot --mode=0755 printer/ausdruck-winxp-spooler $(BIN)
 # nicht mehr erforderlich Ersetzt durch: ausdruck-winxp-splitter/ausdruck-winxp-spooler
-#@install -oroot -groot --mode=0755 standarddrucker/ausdruck-winxp.sh $(BIN)
+#@install -oroot -groot --mode=0755 printer/ausdruck-winxp.sh $(BIN)
 
 leoclient-printer-default:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
-	@install -oroot -groot --mode=0755 standarddrucker/standarddrucker-nach-raum.sh $(BIN)
+	@install -oroot -groot --mode=0755 printer/standarddrucker-nach-raum.sh $(BIN)
 
 
 leoclient-italc:
