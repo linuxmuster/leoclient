@@ -10,7 +10,7 @@ Standards-Version: 3.5.2
 Package: leoclient-leovirtstarter-client
 Architecture: all
 Suggests: 
-Pre-Depends: leovirtstarter-common
+Pre-Depends: leoclient-leovirtstarter-common
 Depends: libfilesys-df-perl, liblog-log4perl-perl
 Description: alternativ software to start VirtualBox
  leovirtstarter-client copies and caches VirtualBox snapshots and starts
@@ -20,8 +20,8 @@ Package: leoclient-leovirtstarter-server
 Architecture: all
 Suggests: 
 Pre-Depends:
-Depends: leovirtstarter-common
-Description: prepares snapshots for leovirtstarter-client 
+Depends: leoclient-leovirtstarter-common
+Description: prepare snapshots for leovirtstarter-client 
  leovirtstarter-server compresses snapshots and determines theis sizes and 
  syncs them to other servers
 
