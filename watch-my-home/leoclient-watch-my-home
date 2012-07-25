@@ -25,6 +25,7 @@ use Log::Log4perl qw(:easy);
 # configure logging
 my $log="/tmp/leoclient-watch-my-home.log";
 my $script="leoclient-watch-my-home";
+my $label_feedback;
 # allow everybody to log int the logfile
 umask 000;
 Log::Log4perl->easy_init({ 
@@ -209,7 +210,6 @@ sub get_new_home{
 }
 
 
-
 sub show_message_dialog {
     #THIS IS THE MAIN FEATURE OF THE APP:
     #you tell it what to display, and how to display it
@@ -228,22 +228,22 @@ sub show_message_dialog {
 
     my ($parent,$icon,$text,$button_type) = @_;
  
-    my $dialog = Gtk2::MessageDialog->new_with_markup (undef,
-					[qw/modal destroy-with-parent/],
+    my $dialog = Gtk2::MessageDialog->new (undef,
+					'destroy-with-parent',
 					"warning",
-					"close",
+					"ok",
 					sprintf "$text");
-#    my $dialog = Gtk2::MessageDialog->new_with_markup ($parent,
-#					[qw/modal destroy-with-parent/],
-#					$icon,
-#					$button_type,
-#					sprintf "$text");
 		
     # this will typically return certain values depending on the 
     # value of $retval.
     # in this application, we only change the label's value accordingly
-    my $retval = $dialog->run;
-    #destroy the dialog as it comes out of the 'run' loop	
-    $dialog->destroy;
+
+
+    my $response = $dialog->run;
+    print "Antwort: $response";
+    $dialog->destroy; # tut nicht
+    print "done\n";
+    system ("/usr/bin/leoclient-watch-my-home &");
+    exit;
 }
 
