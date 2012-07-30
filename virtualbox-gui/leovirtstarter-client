@@ -1,4 +1,7 @@
 #!/usr/bin/perl -w
+# This Script (leovirtstarter-client) was created by Rüdiger Beck
+# It is released under the GPL Version 3
+# For Bugs send mail to (jeffbeck-at-web.de)
 
 use strict;
 use Glib qw/TRUE FALSE/;

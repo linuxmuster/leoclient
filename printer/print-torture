@@ -1,9 +1,8 @@
 #!/usr/bin/perl -w
 # $Id$
-# This Script (ausdruck-winxp) was created by Rüdiger Beck
+# This Script (ausdruck-winxp) was created by RÃ¼diger Beck
 # It is released under the GPL Version 3
-# For Bugs send mail to:
-# jeffbeck@web.de
+# For Bugs send mail to: jeffbeck-at-web.de
 
 # Bibliotheken
 use strict;

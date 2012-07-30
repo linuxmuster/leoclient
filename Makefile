@@ -1,6 +1,6 @@
 #!/usr/bin/make
-# $Id: Makefile,v 1.11 2010-10-06 10:12:08 jeffbeck Exp $
 # Zur Erstellung des Debian-Pakets notwendig (make DESTDIR=/root/sophomorix)
+# Created by Rüdiger Beck (jeffbeck-at-web.de)
 DESTDIR=
 
 # Virtualbox

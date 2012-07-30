@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script created by Rainer Rössler (roesslerrr-at-web.de)
+# License: Free Software (License GPLv3)
 
 cd ~
 

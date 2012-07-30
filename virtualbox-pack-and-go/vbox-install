@@ -1,4 +1,7 @@
 #!/bin/sh
+# This Script (vbox-install) was created by Rüdiger Beck
+# It is released under the GPL Version 3
+# For Bugs send mail to (jeffbeck-at-web.de)
 
 SOURCE=/media/SCHULE/virtualbox/
 MYMACHINE=$HOME/.VirtualBox/Machines/winXP-2010/

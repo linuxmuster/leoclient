@@ -1,9 +1,7 @@
 #!/usr/bin/perl -w
 # This perl module is maintained by Rüdiger Beck
-# It is Free Software (License GPLv3)
-# If you find errors, contact the author
-# jeffbeck@web.de  or  jeffbeck@gmx.de
-
+# It is released under the GPL Version 3
+# For Bugs send mail to (jeffbeck-at-web.de)
 
 package leovirtstarter;
 require Exporter;

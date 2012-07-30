@@ -1,9 +1,8 @@
 #!/usr/bin/perl -w
 # $Id$
-# This Script (watch-my-home) was created by Rüdiger Beck
+# This Script (watch-my-home) was created by RÃ¼diger Beck
 # It is released under the GPL Version 3
-# For Bugs send mail to:
-# jeffbeck@web.de
+# For Bugs send mail to (jeffbeck-at-web.de)
 
 # todo
 # skip some dirs
@@ -13,6 +12,7 @@
 
 # Bibliotheken
 use strict;
+use utf8;
 use Glib qw/TRUE FALSE/;
 use Gtk2 '-init';
 use Linux::Inotify2;
@@ -123,9 +123,9 @@ sub watcher {
   	        &show_message_dialog(undef,
                    "error",
                    "Sie haben eine Datei ausserhalb von $WatchConf::no_warning_dir gespeichert.\n\n".
-                   "Bitte beachten Sie, dass diese Datei nach dem Abmelden gelöscht wird!\n\n".
+                   "Bitte beachten Sie, dass diese Datei nach dem Abmelden gelÃ¶scht wird!\n\n".
                    "Wenn Sie diese Datei auf dem Server dauerhaft abspeichern wollen, ".
-                   "müssen Sie sie in $WatchConf::no_warning_dir speichern.\n",
+                   "mÃ¼ssen Sie sie in $WatchConf::no_warning_dir speichern.\n",
                    'ok');
             } elsif (-l $abs_path){
               # Do something with the link
@@ -133,9 +133,9 @@ sub watcher {
   	        &show_message_dialog(undef,
                    "error",
                    "Sie haben einen Link ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
-                   "Bitte beachten Sie, dass dieser Link nach dem Abmelden gelöscht wird!\n\n".
+                   "Bitte beachten Sie, dass dieser Link nach dem Abmelden gelÃ¶scht wird!\n\n".
                    "Wenn Sie den Link auf dem Server dauerhaft abspeichern wollen, ".
-                   "müssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
+                   "mÃ¼ssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
                    'ok');
             } elsif (-d $abs_path){
               # Do something with the dir
@@ -143,9 +143,9 @@ sub watcher {
   	        &show_message_dialog(undef,
                    "error",
                    "Sie haben einen Ordner ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
-                   "Bitte beachten Sie, dass dieser Ordner mit seinem Inhalt nach dem Abmelden gelöscht wird!\n\n".
+                   "Bitte beachten Sie, dass dieser Ordner mit seinem Inhalt nach dem Abmelden gelÃ¶scht wird!\n\n".
                    "Wenn Sie den Ordner und seinen Inhalt auf dem Server dauerhaft abspeichern wollen, ".
-                   "müssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
+                   "mÃ¼ssen Sie ihn in $WatchConf::no_warning_dir anlegen.\n",
                    'ok');
             } else{
               # Do something with the non-dir, non-file, non-link
@@ -153,8 +153,8 @@ sub watcher {
   	        &show_message_dialog(undef,
                    "error",
                    "Sie haben etwas ausserhalb von $WatchConf::no_warning_dir angelegt.\n\n".
-                   "Bitte beachten Sie, dass es dort nach dem Abmelden gelöscht wird!\n\n".
-                   "Dauerhaft zu speichernde Dinge müssen nach $WatchConf::no_warning_dir gespeichert werden.\n",
+                   "Bitte beachten Sie, dass es dort nach dem Abmelden gelÃ¶scht wird!\n\n".
+                   "Dauerhaft zu speichernde Dinge mÃ¼ssen nach $WatchConf::no_warning_dir gespeichert werden.\n",
                    'ok');
   
             }

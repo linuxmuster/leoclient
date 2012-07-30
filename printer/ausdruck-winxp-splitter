@@ -2,8 +2,7 @@
 # $Id$
 # This Script (ausdruck-winxp-splitter) was created by Rüdiger Beck
 # It is released under the GPL Version 3
-# For Bugs send mail to:
-# jeffbeck@web.de
+# For Bugs send mail to: jeffbeck-at-web.de
 
 # Bibliotheken
 use strict;
