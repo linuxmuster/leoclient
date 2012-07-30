@@ -199,8 +199,10 @@ lm:
 	@@install -oroot -groot --mode=0755 linuxmuster/umount.sh $(SHARE)
 	@@install -oroot -groot --mode=0644 linuxmuster/profile $(SHARE)
 
-#debug2:
-#	@echo '   * Install debug scripts'
-#	@install -d -m0755 -oroot -groot $(SBIN)
-#	@install -oroot -groot --mode=0755  debug/leoclient-debug $(SBIN)
+leoclient-tools:
+	@echo '   * Install leoclient tools'
+	@install -d -m0755 -oroot -groot $(SBIN)
+	@install -oroot -groot --mode=0755  tools/leoclient-admin $(SBIN)
+	@install -d -m755 -oroot -groot $(LEOCLIENTCONF)
+	@install -oroot -groot --mode=0644 tools/leoclient-admin.conf  $(LEOCLIENTCONF)
 

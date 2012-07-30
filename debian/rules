@@ -62,6 +62,7 @@ install: build
 	$(MAKE) leoclient-italc DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) leoclient-shutdown DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) leoclient-icon-script DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) leoclient-tools DESTDIR=$(CURDIR)/debian/leoclient
 
 # Build architecture-independent files here.
 binary-indep: build install

@@ -90,5 +90,15 @@ Description: prepares shutdown
 
 
 
+Package: leoclient-tools
+Architecture: all
+Suggests: 
+Pre-Depends:
+Depends: 
+Description: Tools for administration of a leoclient 
+
+
+
+
 
 
