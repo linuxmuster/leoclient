@@ -63,7 +63,7 @@ my $count=1;
 
 # dir to watch (must be directory)
 #OLD: my $dir=$home;
-#NEW: $Conf::print_dir_user
+my $dir=$home."/".$Conf::print_dir_user;
 
 
 # file to watch in dir
@@ -80,14 +80,14 @@ my $new_home_file="/tmp/heimatverzeichnis";
 # Script
 ############################################################
 ### Define an Inotify2 instance
-INFO "Watching $Conf::print_dir_user for incoming files";
-if (not -e $Conf::print_dir_user){
-    INFO "Watching $Conf::print_dir_user does not exist";
+INFO "Watching $dir for incoming files";
+if (not -e $dir){
+    INFO "Watching $dir does not exist";
     exit;
 }
 my $inotify = new Linux::Inotify2
 or die "Unable to create new inotify object: $!";
-$inotify->watch ( $Conf::print_dir_user, IN_CLOSE_WRITE )
+$inotify->watch ( $dir, IN_CLOSE_WRITE )
 or die "watch creation failed";
 
 
