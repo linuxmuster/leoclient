@@ -6,50 +6,50 @@ RECHNER=`hostname`
 
 HEIMAT=`pwd`
 
-# existieren Desktop-Eintr�ge lokal 
+# existieren Desktop-Einträge lokal 
 if [ -d /usr/share/linuxmuster-client/Desktop ]
 then
  
- # Desktopeintr�ge von localadmin kopieren 
+ # Desktopeinträge von localadmin kopieren 
  # eventuell vorher Verzeichnis Desktop anlegen
- if [ -d `echo $HEIMAT/Desktop` ]
+ if [ -d `echo $HEIMAT/Arbeitsfläche` ]
  then
-  cp -a /usr/share/linuxmuster-client/Desktop/* $HEIMAT/Desktop/
+  cp -a /usr/share/linuxmuster-client/Desktop/* $HEIMAT/Arbeitsfläche/
  else
-  mkdir $HEIMAT/Desktop
-  cp -a /usr/share/linuxmuster-client/Desktop/* $HEIMAT/Desktop/
+  mkdir $HEIMAT/Arbeitsfläche
+  cp -a /usr/share/linuxmuster-client/Desktop/* $HEIMAT/Arbeitsfläche/
  fi
 
 fi
 
-# existieren Desktop-Eintr�ge schulweit
+# existieren Desktop-Einträge schulweit
 if [ -d /home/share/school/.Desktop ]
 then
  
- # Desktopeintr�ge von localadmin kopieren 
+ # Desktopeinträge von localadmin kopieren 
  # eventuell vorher Verzeichnis Desktop anlegen
- if [ -d `echo $HEIMAT/Desktop` ]
+ if [ -d `echo $HEIMAT/Arbeitsfläche` ]
  then
-  cp -a /home/share/school/.Desktop/* $HEIMAT/Desktop/
+  cp -a /home/share/school/.Desktop/* $HEIMAT/Arbeitsfläche/
  else
-  mkdir $HEIMAT/Desktop
-  cp -a /home/share/school/.Desktop/* $HEIMAT/Desktop/
+  mkdir $HEIMAT/Arbeitsfläche
+  cp -a /home/share/school/.Desktop/* $HEIMAT/Arbeitsfläche/
  fi
 
 fi
 
-# existieren Desktop-Eintr�ge fuer Lehrer
+# existieren Desktop-Einträge fuer Lehrer
 if [ -d /home/share/teachers/.Desktop ]
 then
  
- # Desktopeintr�ge von localadmin kopieren 
+ # Desktopeinträge von localadmin kopieren 
  # eventuell vorher Verzeichnis Desktop anlegen
- if [ -d `echo $HEIMAT/Desktop` ]
+ if [ -d `echo $HEIMAT/Arbeitsfläche` ]
  then
-  cp -a /home/share/teachers/.Desktop/* $HEIMAT/Desktop/
+  cp -a /home/share/teachers/.Desktop/* $HEIMAT/Arbeitsfläche/
  else
-  mkdir $HEIMAT/Desktop
-  cp -a /home/share/teachers/.Desktop/* $HEIMAT/Desktop/
+  mkdir $HEIMAT/Arbeitsfläche
+  cp -a /home/share/teachers/.Desktop/* $HEIMAT/Arbeitsfläche/
  fi
 
 fi
