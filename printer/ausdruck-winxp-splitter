@@ -13,6 +13,10 @@ use File::Path;
 # use log names of perl variables, i.e. $UID
 use English;
 use Log::Log4perl qw(:easy);
+
+my $config_file = "/etc/leoclient/leoclient-printer-virtual.conf";
+{package Conf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
+
 # configure logging
 my $log="/tmp/ausdruck-winxp-splitter.log";
 my $script="ausdruck-winxp-splitter";
@@ -30,6 +34,10 @@ my ($EGID_name)=getgrgid($EGID);
 
 INFO "##################################################";
 INFO "$script started (pid=$PROCESS_ID)";
+INFO "   \$print_dir_user:   $Conf::print_dir_user\n";
+INFO "   \$print_file_user:  $Conf::print_file_user\n";
+INFO "   \$spool_dir_user:  $Conf::spool_dir_user\n";
+
 &kill_other_scripts();
 INFO "\$HOME: $home";
 INFO "UID:  $UID_name ($UID)\n";
@@ -41,18 +49,28 @@ INFO "EGID: $EGID_name ($EGID)\n";
 # Configuration
 ############################################################
 # where collect the print files
-my $spool_dir=$home."/.ausdruck-winxp-spool";
+#OLD: my $spool_dir=$home."/".".ausdruck-winxp-spool";
+my $spool_dir=$home."/".$Conf::spool_dir_user;
+
+
 #if (-e "${spool_dir}/*"){
     INFO "Removing files in ${spool_dir}";
     system("rm ${spool_dir}/* > /dev/null 2>&1");
 #}
+
 system("mkdir -p $spool_dir");
 my $count=1;
 
 # dir to watch (must be directory)
-my $dir=$home;
+#OLD: my $dir=$home;
+#NEW: $Conf::print_dir_user
+
+
 # file to watch in dir
-my $filename="ausdruck-winxp.pdf";
+#OLD: my $filename="ausdruck-winxp.pdf";
+#NEW:    $Conf::print_file_user
+
+
 # first target name
 my $target=$spool_dir."/ausdruck-winxp-1.pdf";
 
@@ -62,14 +80,14 @@ my $new_home_file="/tmp/heimatverzeichnis";
 # Script
 ############################################################
 ### Define an Inotify2 instance
-INFO "Watching $dir for incoming files";
-if (not -e $dir){
-    INFO "Watching $dir does not exist";
+INFO "Watching $Conf::print_dir_user for incoming files";
+if (not -e $Conf::print_dir_user){
+    INFO "Watching $Conf::print_dir_user does not exist";
     exit;
 }
 my $inotify = new Linux::Inotify2
 or die "Unable to create new inotify object: $!";
-$inotify->watch ( $dir, IN_CLOSE_WRITE )
+$inotify->watch ( $Conf::print_dir_user, IN_CLOSE_WRITE )
 or die "watch creation failed";
 
 
@@ -104,7 +122,7 @@ sub splitter{
             my $abs_path=$_->fullname;
             my $basename=fileparse($abs_path, ".pdf");
             my $closed_file=$basename.".pdf";
-            if ($closed_file eq $filename){
+            if ($closed_file eq $Conf::print_file_user){
                 move("$abs_path", "$target");
                 INFO "Closed file moved:   $abs_path\n           --> $target";
                 # prepare target name for next file (save time)

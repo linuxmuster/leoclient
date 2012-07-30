@@ -13,10 +13,14 @@ use File::Path;
 # use log names of perl variables, i.e. $UID
 use English;
 use Log::Log4perl qw(:easy);
+
+my $config_file = "/etc/leoclient/leoclient-printer-virtual.conf";
+{package Conf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
+
 # configure logging
 my $log="/tmp/ausdruck-winxp-spooler.log";
 my $script="ausdruck-winxp-spooler";
-# allow everybody to log int the logfile
+# allow everybody to log into the logfile
 umask 000;
 Log::Log4perl->easy_init({ 
                 level   => $DEBUG,
@@ -30,6 +34,9 @@ my ($EGID_name)=getgrgid($EGID);
 
 INFO "##################################################";
 INFO "$script started (pid=$PROCESS_ID)";
+INFO "   \$spool_dir_user:  $Conf::spool_dir_user\n";
+INFO "   \$final_printed_file_user:  $Conf::final_printed_file_user\n";
+
 &kill_other_scripts();
 INFO "\$HOME: $home";
 INFO "UID:  $UID_name ($UID)\n";
@@ -41,10 +48,14 @@ INFO "EGID: $EGID_name ($EGID)\n";
 # Configuration
 ############################################################
 # dir to watch (must be directory)
-my $dir=$home."/.ausdruck-winxp-spool";
+#OLD: my $dir=$home."/".".ausdruck-winxp-spool";
+my $dir=$home."/".$Conf::spool_dir_user;
+
 system("mkdir -p $dir");
 
-my $final_file=$home."/ausdruck-winxp-fertig.pdf";
+#OLD: my $final_file=$home."/"."ausdruck-winxp-fertig.pdf";
+my $final_file=$home."/".$Conf::final_printed_file_user;
+
 
 my $new_home_file="/tmp/heimatverzeichnis";
 
