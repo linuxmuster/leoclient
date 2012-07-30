@@ -25,12 +25,14 @@ my $help=0;
 my $verbose=0;
 my $prep=0;
 my $verify=0;
+my $clean=0;
 
 # Parsen der Optionen
 my $testopt=GetOptions(
            "help|h" => \$help,
            "prep" => \$prep,
            "verify" => \$verify,
+           "clean" => \$clean,
            "verbose|v+" => \$verbose,
           );
 
@@ -44,8 +46,9 @@ leoclient-debug
 
 Options
   -h  / --help
-  --prep  prepare for imaging
-  --prep  verify if all files are correct
+  --prep    prepare for imaging
+  --verify  verify if all files are correct (untested)
+  --clean   delet files created by --prep and --verify
   
 
 ');
@@ -68,7 +71,7 @@ if ($prep==1){
 }
 
 if ($verify==1){
-    #&perm_create($perm_file_verify);
+    &perm_create($perm_file_verify);
     my $diff_command="diff $perm_file_log $perm_file_verify";
     print "$diff_command\n\n";
     print "########## $perm_file_log  $perm_file_verify ####################\n";
