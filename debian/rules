@@ -53,16 +53,11 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/leoclient
-	$(MAKE) leoclient-leovirtstarter-client DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-leovirtstarter-server DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-leovirtstarter-common DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-watch-my-home DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-printer-virtual DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-printer-default DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-italc DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-shutdown DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-icon-script DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) leoclient-tools DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-leovirtstarter-client DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-leovirtstarter-server DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-leovirtstarter-common DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-printer-virtual DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-tools DESTDIR=$(CURDIR)/debian/leoclient
 
 # Build architecture-independent files here.
 binary-indep: build install

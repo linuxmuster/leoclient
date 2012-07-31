@@ -6,7 +6,6 @@ Build-Depends: debhelper , perl-base, fakeroot
 Standards-Version: 3.5.2
 
 
-
 Package: leoclient-leovirtstarter-client
 Architecture: all
 Suggests: 
@@ -16,6 +15,7 @@ Description: alternativ software to start VirtualBox
  leovirtstarter-client copies and caches VirtualBox snapshots and starts
  them
 
+
 Package: leoclient-leovirtstarter-server
 Architecture: all
 Suggests: 
@@ -24,6 +24,7 @@ Depends: leoclient-leovirtstarter-common
 Description: prepare snapshots for leovirtstarter-client 
  leovirtstarter-server compresses snapshots and determines theis sizes and 
  syncs them to other servers
+
 
 Package: leoclient-leovirtstarter-common
 Architecture: all
@@ -35,16 +36,6 @@ Description: alternativ software to start VirtualBox
  them
 
 
-Package: leoclient-watch-my-home
-Architecture: all
-Suggests: 
-Pre-Depends:
-Depends: liblinux-inotify2-perl, liblog-log4perl-perl
-Description: watches the home directory of a user and shows errors when
- files or dirs are created outside a specific server directory
-
-
-
 Package: leoclient-printer-virtual
 Architecture: all
 Suggests: 
@@ -52,42 +43,6 @@ Pre-Depends:
 Depends: liblinux-inotify2-perl, liblog-log4perl-perl
 Description: Watches a directory used for printed files. 
  Then sends the created files to the default printer
-
-
-Package: leoclient-printer-default
-Architecture: all
-Suggests: 
-Pre-Depends:
-Depends: 
-Description: Sets the default printer according ti IP, ...
-
-
-
-Package: leoclient-italc
-Architecture: all
-Suggests: 
-Pre-Depends:
-Depends: 
-Description: prepares italc
-
-
-
-Package: leoclient-shutdown
-Architecture: all
-Suggests: 
-Pre-Depends:
-Depends: 
-Description: prepares shutdown 
-
-
-
-Package: leoclient-icon-script
-Architecture: all
-Suggests: 
-Pre-Depends:
-Depends: 
-Description: prepares shutdown 
-
 
 
 Package: leoclient-tools
