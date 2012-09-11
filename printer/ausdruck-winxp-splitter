@@ -63,7 +63,7 @@ my $count=1;
 
 # dir to watch (must be directory)
 #OLD: my $dir=$home;
-my $dir=$home."/".$Conf::print_dir_user;
+my $dir=$home."/Home_auf_Server/".$Conf::print_dir_user;
 
 
 # file to watch in dir
@@ -72,7 +72,7 @@ my $dir=$home."/".$Conf::print_dir_user;
 
 
 # first target name
-my $target=$spool_dir."/ausdruck-winxp-1.pdf";
+my $target=$spool_dir."/Home_auf_Server/ausdruck-winxp-1.pdf";
 
 my $new_home_file="/tmp/heimatverzeichnis";
 
