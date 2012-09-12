@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # $Id$
-# This Script (ausdruck-winxp-spooler) was created by Rüdiger Beck
+# This Script (run-vm-printer-spooler) was created by Rüdiger Beck
 # It is released under the GPL Version 3
 # For Bugs send mail to: jeffbeck-at-web.de
 
@@ -14,12 +14,12 @@ use File::Path;
 use English;
 use Log::Log4perl qw(:easy);
 
-my $config_file = "/etc/leoclient/leoclient-printer-virtual.conf";
+my $config_file = "/etc/leoclient/leoclient-vm-printer.conf";
 {package Conf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
 
 # configure logging
-my $log="/tmp/ausdruck-winxp-spooler.log";
-my $script="ausdruck-winxp-spooler";
+my $log="/tmp/run-vm-printer-spooler.log";
+my $script="run-vm-printer-spooler";
 # allow everybody to log into the logfile
 umask 000;
 Log::Log4perl->easy_init({ 

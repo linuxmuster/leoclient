@@ -33,7 +33,7 @@ help:
 	@echo '   make leoclient-leovirtstarter-common'
 	@echo '      install common files for leovirtstarter-client and leovirtstarter-server '
 	@echo ' '
-	@echo '   make leoclient-printer-virtual'
+	@echo '   make leoclient-vm printer'
 	@echo '      install pdf-file splitter and spooler'
 	@echo ' '
 	@echo '   make deb'
@@ -117,13 +117,13 @@ clean:
 
 
 
-leoclient-printer-virtual:
+leoclient-vm-printer:
 	@echo '   * Installing printer scripts'
 	@install -d -m0755 -oroot -groot $(BIN)
-	@install -oroot -groot --mode=0755 printer/ausdruck-winxp-splitter $(BIN)
-	@install -oroot -groot --mode=0755 printer/ausdruck-winxp-spooler $(BIN)
+	@install -oroot -groot --mode=0755 printer/run-vm-printer-splitter $(BIN)
+	@install -oroot -groot --mode=0755 printer/run-vm-printer-spooler $(BIN)
 	@install -d -m755 -oroot -groot $(LEOCLIENTCONF)
-	@install -oroot -groot --mode=0644 printer/leoclient-printer-virtual.conf  $(LEOCLIENTCONF)
+	@install -oroot -groot --mode=0644 printer/leoclient-vm-printer.conf  $(LEOCLIENTCONF)
 
 
 

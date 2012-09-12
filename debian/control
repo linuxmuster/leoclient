@@ -36,7 +36,7 @@ Description: alternativ software to start VirtualBox
  them
 
 
-Package: leoclient-printer-virtual
+Package: leoclient-vm-printer
 Architecture: all
 Suggests: 
 Pre-Depends:

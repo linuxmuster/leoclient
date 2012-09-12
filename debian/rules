@@ -56,7 +56,7 @@ install: build
 	$(MAKE) -B leoclient-leovirtstarter-client DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-leovirtstarter-server DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-leovirtstarter-common DESTDIR=$(CURDIR)/debian/leoclient
-	$(MAKE) -B leoclient-printer-virtual DESTDIR=$(CURDIR)/debian/leoclient
+	$(MAKE) -B leoclient-vm-printer DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-tools DESTDIR=$(CURDIR)/debian/leoclient
 
 # Build architecture-independent files here.

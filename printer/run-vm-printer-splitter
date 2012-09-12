@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # $Id$
-# This Script (ausdruck-winxp-splitter) was created by Rüdiger Beck
+# This Script (run-vm-printer-splitter) was created by Rüdiger Beck
 # It is released under the GPL Version 3
 # For Bugs send mail to: jeffbeck-at-web.de
 
@@ -14,12 +14,12 @@ use File::Path;
 use English;
 use Log::Log4perl qw(:easy);
 
-my $config_file = "/etc/leoclient/leoclient-printer-virtual.conf";
+my $config_file = "/etc/leoclient/leoclient-vm-printer.conf";
 {package Conf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
 
 # configure logging
-my $log="/tmp/ausdruck-winxp-splitter.log";
-my $script="ausdruck-winxp-splitter";
+my $log="/tmp/run-vm-printer-splitter.log";
+my $script="run-vm-printer-splitter";
 # allow everybody to log int the logfile
 umask 000;
 Log::Log4perl->easy_init({ 
@@ -72,7 +72,7 @@ my $dir=$home."/Home_auf_Server/".$Conf::print_dir_user;
 
 
 # first target name
-my $target=$spool_dir."/Home_auf_Server/ausdruck-winxp-1.pdf";
+my $target=$spool_dir."/Home_auf_Server/ausdruck-1.pdf";
 
 my $new_home_file="/tmp/heimatverzeichnis";
 
@@ -127,7 +127,7 @@ sub splitter{
                 INFO "Closed file moved:   $abs_path\n           --> $target";
                 # prepare target name for next file (save time)
                 $count++;
-                $target=$spool_dir."/ausdruck-winxp-".$count.".pdf";
+                $target=$spool_dir."/ausdruck-".$count.".pdf";
             }
         }
     }

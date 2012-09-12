@@ -1,3 +1,6 @@
+packaging: Pfade mit winxp (6x) in /virtualbox/virtualbox-vm-conf-kopieren.sh
+Weglassen.
+
 ############################################################
 # leoclient
 ############################################################
@@ -59,13 +62,13 @@ bioszeitstellen dazu
 # Druckerscript
 ############################################################
 
-1) ausdruck-winxp-splitter überwacht mit inotify 
-   ~/ausdruck-winxp.pdf 
+1) run-vm-printer-splitter überwacht mit inotify 
+   ~/ausdruck.pdf 
 und schiebt bei einem File-close die Dateien nach
-   ~/.ausdruck-winxp-spool
+   ~/.ausdruck-spool
 
-2) ausdruck-winxp-spooler überwacht mit inotify
-   ~/.ausdruck-winxp-spool
+2) run-vm-printer-spooler überwacht mit inotify
+   ~/.ausdruck-spool
 und druckt die hiereingemovten Dateien der Reihe nach aus.
 
 Probleme:
