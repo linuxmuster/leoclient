@@ -7,6 +7,7 @@ DESTDIR=
 VBOXDIR=$(DESTDIR)/usr/bin
 VIRTCONF=$(DESTDIR)/etc/leovirtstarter
 LEOCLIENTCONF=$(DESTDIR)/etc/leoclient
+MENU=$(DESTDIR)/usr/share/menu
 # Perl modules
 PERLMOD=$(DESTDIR)/usr/share/perl5/leoclient
 BIN=$(DESTDIR)/usr/bin
@@ -81,6 +82,8 @@ leoclient-leovirtstarter-client:
 	@echo '   * Installing vbox scripts'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopieren.sh $(VBOXDIR)
+	@install -d -m0755 -oroot -groot $(MENU)
+	@install -oroot -groot --mode=0755 virtualbox-gui/menu/leovirtstarter $(MENU) 
 
 
 leoclient-leovirtstarter-server:
