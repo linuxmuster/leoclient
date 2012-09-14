@@ -49,7 +49,7 @@ Package: leoclient-tools
 Architecture: all
 Suggests: 
 Pre-Depends:
-Depends: 
+Depends: libterm-readkey-perl
 Description: Tools for administration of a leoclient 
 
 
