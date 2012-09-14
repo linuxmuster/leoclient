@@ -1,9 +1,12 @@
-packaging: Pfade mit winxp (6x) in /virtualbox/virtualbox-vm-conf-kopieren.sh
-Weglassen.
 
 ############################################################
 # leoclient
 ############################################################
+
+patchen von /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy
+um user zu ermöglichen.
+
+
 
 
 snapshot starter:

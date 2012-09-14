@@ -41,8 +41,8 @@ Architecture: all
 Suggests: 
 Pre-Depends:
 Depends: liblinux-inotify2-perl, liblog-log4perl-perl
-Description: Watches a directory used for printed files. 
- Then sends the created files to the default printer
+Description: Watches a directory used for virtual machine printing. 
+ Sends the created files to the default printer
 
 
 Package: leoclient-tools
@@ -51,6 +51,14 @@ Suggests:
 Pre-Depends:
 Depends: 
 Description: Tools for administration of a leoclient 
+
+
+Package: leoclient-bsz-clientbundle
+Architecture: all
+Suggests: 
+Pre-Depends:
+Depends: leoclient-leovirtstarter-client, leoclient-vm-printer, leoclient-tools, linuxmuster-client-extras 
+Description: Complete bundle of packages at BSZ Leonberg 
 
 
 
