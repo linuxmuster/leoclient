@@ -17,20 +17,20 @@ use Log::Log4perl qw(:easy);
 my $config_file = "/etc/leoclient/leoclient-vm-printer.conf";
 {package Conf ; do $config_file || die "ERROR: $config_file not found or readable\n"} 
 
+my $home=$ENV{'HOME'};
+my $UID_name=getpwuid($UID);
+my $EUID_name=getpwuid($EUID);
+my ($GID_name)=getgrgid($GID);
+my ($EGID_name)=getgrgid($EGID);
+
 # configure logging
-my $log="/tmp/run-vm-printer-spooler.log";
+my $log="/tmp/run-vm-printer-spooler.log-".$UID_name;
 my $script="run-vm-printer-spooler";
 # allow everybody to log into the logfile
 umask 000;
 Log::Log4perl->easy_init({ 
                 level   => $DEBUG,
                 file    => ">>$log" } );    
-
-my $home=$ENV{'HOME'};
-my $UID_name=getpwuid($UID);
-my $EUID_name=getpwuid($EUID);
-my ($GID_name)=getgrgid($GID);
-my ($EGID_name)=getgrgid($EGID);
 
 INFO "##################################################";
 INFO "$script started (pid=$PROCESS_ID)";
