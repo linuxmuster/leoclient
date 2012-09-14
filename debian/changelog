@@ -1,3 +1,9 @@
+leoclient (0.0.3-11) precise; urgency=low
+
+  * New fixes
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 14 Sep 2012 15:39:17 +0200
+
 leoclient (0.0.2-1) precise; urgency=low
 
   * New upstream Release
