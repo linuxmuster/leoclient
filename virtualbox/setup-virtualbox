@@ -245,20 +245,23 @@ fi
 #*******************************************************************#
 fi
 
-
-# pdf-Dateien an Drucker weiterreichen nicht von root starten
-if [ "`echo $HEIMAT | grep root`" = "" ]
-then
-# if [ "`pgrep ausdruck-winxp`" == "" ]
+#
+# wird ab jetzt von linuxmuster-client-extras-login 
+# gestartet (verlinken mit linuxmuster-client-extras-setup)
+#
+# # pdf-Dateien an Drucker weiterreichen nicht von root starten
+# if [ "`echo $HEIMAT | grep root`" = "" ]
 # then
-#   /usr/bin/ausdruck-winxp.sh &
+# # if [ "`pgrep ausdruck-winxp`" == "" ]
+# # then
+# #   /usr/bin/ausdruck-winxp.sh &
+# # fi
+#  if [ "`pgrep ausdruck-winxp-spooler`" == "" ]
+#  then
+#    /usr/bin/ausdruck-winxp-spooler &
+#  fi
+#  if [ "`pgrep ausdruck-winxp-splitter`" == "" ]
+#  then
+#    /usr/bin/ausdruck-winxp-splitter &
+#  fi
 # fi
- if [ "`pgrep ausdruck-winxp-spooler`" == "" ]
- then
-   /usr/bin/ausdruck-winxp-spooler &
- fi
- if [ "`pgrep ausdruck-winxp-splitter`" == "" ]
- then
-   /usr/bin/ausdruck-winxp-splitter &
- fi
-fi
