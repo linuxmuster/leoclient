@@ -7,18 +7,26 @@
 # Bibliotheken
 use strict;
 
-my $home=$ENV{'HOME'};
-my $target=$home."/ausdruck.pdf";
+my $home="";
 
 if (not defined $ARGV[0]){
-    print "\nArgument Missing ! (Number of pdf files)\n\n";
+    print "\nArgument 1 Missing ! (Number of pdf files)\n\n";
     exit;
 }
+
+if (not defined $ARGV[1]){
+    $home=$ENV{'HOME'};
+    print "\nArgument 2 Missing (Homedir): Using $home \n\n";
+} else {
+    $home=$ARGV[1];
+}
+
+my $target=$home."Home_auf_Server/ausdruck-winxp.pdf";
 
 
 print "Creating $ARGV[0] files\n";
 for (my $i=1 ; $i <= $ARGV[0] ; $i++){
-    print "Printing $i\n";
+    print "Printing $i: $target\n";
     system("cp ./mini.pdf $target");
 }
 

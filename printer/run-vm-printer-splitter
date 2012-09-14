@@ -33,10 +33,6 @@ Log::Log4perl->easy_init({
                 file    => ">>$log" } );    
 
 INFO "##################################################";
-INFO "$script started (pid=$PROCESS_ID)";
-INFO "   \$print_dir_user:   $Conf::print_dir_user\n";
-INFO "   \$print_file_user:  $Conf::print_file_user\n";
-INFO "   \$spool_dir_user:  $Conf::spool_dir_user\n";
 
 &kill_other_scripts();
 INFO "\$HOME: $home";
@@ -50,7 +46,7 @@ INFO "EGID: $EGID_name ($EGID)\n";
 ############################################################
 # where collect the print files
 #OLD: my $spool_dir=$home."/".".ausdruck-winxp-spool";
-my $spool_dir=$home."/".$Conf::spool_dir_user;
+my $spool_dir=$home."/Home_auf_Server/".$Conf::spool_dir_user;
 
 
 #if (-e "${spool_dir}/*"){
@@ -63,7 +59,7 @@ my $count=1;
 
 # dir to watch (must be directory)
 #OLD: my $dir=$home;
-my $dir=$home."/Home_auf_Server/".$Conf::print_dir_user;
+my $dir=$home."/Home_auf_Server".$Conf::print_dir_user;
 
 
 # file to watch in dir
@@ -72,9 +68,18 @@ my $dir=$home."/Home_auf_Server/".$Conf::print_dir_user;
 
 
 # first target name
-my $target=$spool_dir."/Home_auf_Server/ausdruck-1.pdf";
+my $target=$spool_dir."/ausdruck-1.pdf";
 
 my $new_home_file="/tmp/heimatverzeichnis";
+
+INFO "$script started (pid=$PROCESS_ID)";
+INFO "   Watching:           $dir";
+INFO "   \$print_dir_user:  $Conf::print_dir_user\n";
+INFO "   \$print_file_user: $Conf::print_file_user\n";
+INFO "   \$spool_dir_user:  $Conf::spool_dir_user\n";
+INFO "   First Target:      $target\n";
+
+
 
 ############################################################
 # Script
@@ -141,7 +146,7 @@ sub user_change{
             my $new_home=&get_new_home();
             #INFO "Userchange($PROCESS_ID): $new_home ($home)";
             if ($new_home ne $home){
-                INFO "Userchange($PROCESS_ID): user has changed -> terminate";
+                INFO "Userchange($PROCESS_ID, $new_home, $home): user has changed -> terminate";
                 return;
             } else {
                 # INFO "Userchange($PROCESS_ID): user unchanged -> waiting";
