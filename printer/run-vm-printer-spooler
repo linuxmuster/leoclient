@@ -54,7 +54,7 @@ my $dir=$home."/Home_auf_Server/".$Conf::spool_dir_user;
 system("mkdir -p $dir");
 
 #OLD: my $final_file=$home."/"."ausdruck-winxp-fertig.pdf";
-my $final_file=$home."/Home_auf_server/".$Conf::final_printed_file_user;
+my $final_file=$home."/Home_auf_Server/".$Conf::final_printed_file_user;
 
 
 my $new_home_file="/tmp/heimatverzeichnis";
