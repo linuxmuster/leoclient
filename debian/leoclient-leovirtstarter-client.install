@@ -1,3 +1,4 @@
 usr/bin/leovirtstarter-client
+usr/bin/setup-virtualbox
 etc/leovirtstarter/leovirtstarter.conf
 etc/leovirtstarter/leovirtstarter-onthego.conf

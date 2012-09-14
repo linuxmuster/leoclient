@@ -81,7 +81,7 @@ leoclient-leovirtstarter-client:
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-onthego.conf  $(VIRTCONF)
 	@echo '   * Installing vbox scripts'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
-	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopieren.sh $(VBOXDIR)
+	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
 	@install -d -m0755 -oroot -groot $(MENU)
 	@install -oroot -groot --mode=0755 virtualbox-gui/menu/leovirtstarter $(MENU) 
 
