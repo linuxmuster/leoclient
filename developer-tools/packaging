@@ -1,0 +1,44 @@
+
+############################################################
+##### Testing #####
+
+0. aptitude install debhelper
+
+1. Load your ssh-key for github
+   ssh-agent /bin/bash
+   ssh-add /path/to/key
+
+2. Clone leoclient (and linuxmuster-client-extras):
+   cd /root
+   git clone git@github.com:linuxmuster/leoclient.git
+   git clone git@github.com:linuxmuster/linuxmuster-client-extras.git
+
+
+3. Make packages from the current github branch (master is the only branch at the moment) 
+   cd /root/linuxmuster-client-extras
+   make deb
+   cd /root/leoclient
+   make deb
+   
+4. Install the new packages:
+   cd /root/leoclient
+   ./developer-tools/testinstall-client-packages
+     
+ 
+
+############################################################
+##### Package for upload #####
+
+Before creating a package for official upload do:
+
+1. cd /root/leoclient
+   dch -i
+      --> Edit changelog
+
+2. git add|commit|push
+
+3. git tag ....
+
+4. make deb
+
+5. upload the package

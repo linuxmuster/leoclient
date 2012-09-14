@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# call me from leoclient dir with:
+#   ./developer-tools/testinstall-client-packages
+
+dpkg -i ../leoclient-leovirtstarter-client*.deb
+dpkg -i ../leoclient-leovirtstarter-common*.deb
+dpkg -i ../leoclient-vm-printer*.deb
+dpkg -i ../leoclient-tools*.deb
+dpkg -i ../leoclient-bsz-clientbundle*.deb
+dpkg -i ../linuxmuster-client-extras*.deb
+
+# leoclient-leovirtstarter-server darf NICHT auf dem Client installiert werden
+
