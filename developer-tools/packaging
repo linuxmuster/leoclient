@@ -2,7 +2,7 @@
 ############################################################
 ##### Testing #####
 
-0. aptitude install debhelper
+0. aptitude install debhelper devscripts
 
 1. Load your ssh-key for github
    ssh-agent /bin/bash

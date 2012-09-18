@@ -1,0 +1,7 @@
+Packaging:
+
+../developer-tools/packaging
+
+Install created packages:
+
+../developer-tools/testinstall-client-packages
