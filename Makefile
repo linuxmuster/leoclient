@@ -82,8 +82,9 @@ leoclient-leovirtstarter-client:
 	@echo '   * Installing vbox scripts'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
-	@install -d -m0755 -oroot -groot $(MENU)
-	@install -oroot -groot --mode=0755 virtualbox-gui/menu/leovirtstarter $(MENU) 
+	# this does dh_menuinstall
+	#@install -d -m0755 -oroot -groot $(MENU)
+	#@install -oroot -groot --mode=0755 virtualbox-gui/menu/leovirtstarter $(MENU) 
 
 
 leoclient-leovirtstarter-server:

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VirtualBox Snapshotstarter
+Comment=Starting Snapshots of VirtualBox
+Comment[de]=Starten von VirtualBox Snapshots
+TryExec=leovirtstarter-client
+Exec=leovirtstarter-client
+Icon=librecad
+Categories=Graphics;Engineering;
