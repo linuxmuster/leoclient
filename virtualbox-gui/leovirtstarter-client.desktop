@@ -8,4 +8,5 @@ TryExec=leovirtstarter-client
 Exec=leovirtstarter-client
 Icon=leovirtstarter-client
 Categories=Graphics;Engineering;
+Categories=Emulator;System;Application;
 Terminal=false
