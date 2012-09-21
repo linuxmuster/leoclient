@@ -6,5 +6,6 @@ Comment=Starting Snapshots of VirtualBox
 Comment[de]=Starten von VirtualBox Snapshots
 TryExec=leovirtstarter-client
 Exec=leovirtstarter-client
-Icon=librecad
+Icon=leovirtstarter-client
 Categories=Graphics;Engineering;
+Terminal=false

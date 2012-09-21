@@ -1,7 +1,21 @@
 Packaging:
 
+You need :
+
+aptitude install debhelper desktop-file-utils
+
+
 ../developer-tools/packaging
 
-Install created packages:
+Install created packages on a client (This omits the server package):
 
 ../developer-tools/testinstall-client-packages
+
+
+# Hints 
+
+verify *.desktop file:
+
+   desktop-file-validate file
+
+

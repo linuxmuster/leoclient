@@ -1,6 +1,6 @@
 ?package(leoclient-leovirtstarter-client):\
   needs="X11"\
   section="Applications/Science/Engineering"\
-  icon="/usr/share/pixmaps/librecad.xpm"\
-  title="snapshotstarter"\
-  command="/usr/bin/librecad"
+  icon="/usr/share/pixmaps/leovirtstarter-client.png"\
+  title="VirtualBox Snapshotstarter"\
+  command="/usr/bin/leovirtstarter-client"

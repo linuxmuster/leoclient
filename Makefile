@@ -13,6 +13,8 @@ PERLMOD=$(DESTDIR)/usr/share/perl5/leoclient
 BIN=$(DESTDIR)/usr/bin
 SBIN=$(DESTDIR)/usr/sbin
 SHARE=$(DESTDIR)/usr/share/linuxmuster-client
+DESKTOP=$(DESTDIR)/usr/share/applications
+ICON=$(DESTDIR)/usr/share/pixmaps
 INIT=$(DESTDIR)/etc/init.d
 # where is the start script linked
 START=$(DESTDIR)/etc/rc2.d/S99leoclient
@@ -82,10 +84,12 @@ leoclient-leovirtstarter-client:
 	@echo '   * Installing vbox scripts'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
-	# this does dh_menuinstall
-	#@install -d -m0755 -oroot -groot $(MENU)
-	#@install -oroot -groot --mode=0755 virtualbox-gui/menu/leovirtstarter $(MENU) 
-
+	@echo '   * Installing unity dash entry'
+	@install -d -m0755 -oroot -groot $(DESKTOP)
+	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-client.desktop $(DESKTOP)
+	@echo '   * Installing icon'
+	@install -d -m0755 -oroot -groot $(ICON)
+	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-client.png $(ICON)
 
 leoclient-leovirtstarter-server:
 	@echo '   * Installing the server script'
