@@ -6,7 +6,7 @@
 patchen von /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy
 um user zu ermöglichen.
 
-
+create links in preumount premount postmount postumount, ....
 
 
 snapshot starter:

@@ -1,18 +1,33 @@
+############################################################
 Packaging:
+############################################################
 
-You need :
-
-aptitude install debhelper desktop-file-utils
-
-
+Testig git source code in a package:
 ../developer-tools/packaging
 
-Install created packages on a client (This omits the server package):
 
-../developer-tools/testinstall-client-packages
+Make official package:
+../developer-tools/packaging
 
 
+Update a manual installation:
+
+1. Login as localadmin
+2. become root
+3. aptitude update
+4. aptitude install leoclient-bsz-clientbundle
+   Overwrite configs: Y
+5. linuxmuster-client-extras-setup --delete-old stuff
+6. cd /usr/share/linuxmuster-client-extras/examples
+   ./bszleo-setup
+   
+
+
+
+
+############################################################
 # Hints 
+############################################################
 
 verify *.desktop file:
 
