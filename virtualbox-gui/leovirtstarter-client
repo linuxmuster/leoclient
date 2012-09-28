@@ -71,6 +71,7 @@ if ($on_the_go ne "" and -e $on_the_go){
     print "   ERROR:  None of these configuration files found:\n";
     print "   * $Conf::common_configuration_file\n";
     print "   * $on_the_go\n";
+    system("/usr/bin/VirtualBox");
     exit;
 } 
 
