@@ -1,7 +1,12 @@
+leoclient (0.1.1-1) precise-testing; urgency=low
+
+  * New upstream Release (Start VirtualBox as fallback) 
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 28 Sep 2012 11:30:58 +0200
+
 leoclient (0.1.0-1) precise-testing; urgency=low
 
   * New Package for precise 
-  * 
 
  -- Ruediger Beck <bz@j1009p16.bszleo.de>  Thu, 27 Sep 2012 13:19:32 +0200
 
