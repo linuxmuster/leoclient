@@ -1085,11 +1085,19 @@ sub create_radiobuttons {
         }
 
         if ($host_check==1){
-          if (exists $leovirtstarter::snapshots{$button}{'hosts'}{$hostname}){
+          # hostname on a linbo client can have an -w added at the end
+          # when synchronizing has failed
+	  my $alternate_linbo_hostname=$hostname;
+          $alternate_linbo_hostname=~s/-w$//g;
+          if (exists $leovirtstarter::snapshots{$button}{'hosts'}{$hostname}
+                  or $leovirtstarter::snapshots{$button}{'hosts'}{$alternate_linbo_hostname}){
 	      INFO "Host $hostname is ",
                    "$leovirtstarter::snapshots{$button}{'hosts'}{$hostname}";
+	      INFO "Linbo Host $alternate_linbo_hostname is ",
+                   "$leovirtstarter::snapshots{$button}{'hosts'}{$alternate_linbo_hostname}";
           } else {
               INFO "Host >$hostname< not found as allowed host";
+              INFO "Linbo Host >$alternate_linbo_hostname< not found as allowed host";
               $host_check_ok=0; 
           }
         }
