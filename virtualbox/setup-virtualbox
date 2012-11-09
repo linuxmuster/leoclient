@@ -27,7 +27,7 @@ then
 fi
 
 # existiert VirtualBox-Konfiguration lokal 
-if [ -d /usr/share/linuxmuster-client/VirtualBox ]
+if [ -d /usr/share/leoclient-virtualbox/VirtualBox ]
 then
  
  # VirtualBox-Konfiguration von lokal kopieren 
@@ -41,11 +41,11 @@ then
 
    if [ -d `echo $HEIMAT/.VirtualBox/Machines/winXP` ]
    then
-     cp /usr/share/linuxmuster-client/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
+     cp /usr/share/leoclient-virtualbox/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    else
-     cp -r /usr/share/linuxmuster-client/VirtualBox/* $HEIMAT/.VirtualBox/
+     cp -r /usr/share/leoclient-virtualbox/VirtualBox/* $HEIMAT/.VirtualBox/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    fi
@@ -54,7 +54,7 @@ then
 
  else
   mkdir $HEIMAT/.VirtualBox
-  cp -r /usr/share/linuxmuster-client/VirtualBox/* $HEIMAT/.VirtualBox/
+  cp -r /usr/share/leoclient-virtualbox/VirtualBox/* $HEIMAT/.VirtualBox/
   PATCHEN="1"     # -> Pfad fuer shares werden angepasst
   HEIMATTMP="NEU" # -> RAM wird angepasst
  fi
