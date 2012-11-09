@@ -16,7 +16,7 @@ fi
 echo $HEIMAT > /tmp/heimatverzeichnis
 chmod 777 /tmp/heimatverzeichnis
 
-WINXP=`echo $HEIMAT/.VirtualBox/Machines/winXP-2010/winXP-2010.xml`
+WINXP=`echo $HEIMAT/.VirtualBox/Machines/winXP/winXP.xml`
 VIRTUAL=`echo $HEIMAT/.VirtualBox/VirtualBox.xml`
 
 PATCHEN="0"
@@ -39,9 +39,9 @@ then
   if [ $HEIMATTMP != $HEIMAT ]
   then
 
-   if [ -d `echo $HEIMAT/.VirtualBox/Machines/winXP-2010` ]
+   if [ -d `echo $HEIMAT/.VirtualBox/Machines/winXP` ]
    then
-     cp /usr/share/linuxmuster-client/VirtualBox/Machines/winXP-2010/winXP-2010.xml $HEIMAT/.VirtualBox/Machines/winXP-2010/
+     cp /usr/share/linuxmuster-client/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    else
@@ -106,7 +106,7 @@ RAMFIRST=`echo ${RAM:0:1}`
 RAMSECOND=`echo ${RAM:1:1}`
 
 # aktuelle Konfigurationsdatei auf 1024 MB setzen
-# wenn Standard winXP-2010.xml kopiert wurde, 
+# wenn Standard winXP.xml kopiert wurde, 
 # genuegt es 256 MB durch 1024 zu ersetzen
 # bzw. kann dieser Schritt auskommentiert werden 
  

@@ -4,15 +4,15 @@
 # For Bugs send mail to (jeffbeck-at-web.de)
 
 SOURCE=/media/SCHULE/virtualbox/
-MYMACHINE=$HOME/.VirtualBox/Machines/winXP-2010/
+MYMACHINE=$HOME/.VirtualBox/Machines/winXP/
 
-# winXP-2010.xml
+# winXP.xml
 mkdir -p $MYMACHINE
-cp $SOURCE/localadmin/.VirtualBox/Machines/winXP-2010/winXP-2010.xml $MYMACHINE
+cp $SOURCE/localadmin/.VirtualBox/Machines/winXP/winXP.xml $MYMACHINE
 
 # Weiter:
 # Zeile MachineEntry aus .VirtualBox/VirtualBox.xml ins HOME 
-# --> winXP-2010 erscheint in VirtualBox
+# --> winXP erscheint in VirtualBox
 
 # Zwei Zeilen mit der Harddisk hinzufuegen
 # Achtung End Tag HardDisks erhalten
@@ -24,12 +24,12 @@ mkdir -p /virtual/vdi
 
 
 # besser rsync
-#cp /media/SCHULE/virtualbox/virtual/virtual/vdi/winXP-2010.vdi /virtual/vdi
+#cp /media/SCHULE/virtualbox/virtual/virtual/vdi/winXP.vdi /virtual/vdi
 
-mkdir -p /virtual/Machines/winXP-2010/Snapshots
+mkdir -p /virtual/Machines/winXP/Snapshots
 
 # besser rsync
-#cp /media/SCHULE/virtualbox/virtual/virtual/Machines/winXP-2010/Snapshots/\{8c816439-1e6e-430f-9865-db7a2a96206f\}.vdi /virtual/Machines/winXP-2010/Snapshots
+#cp /media/SCHULE/virtualbox/virtual/virtual/Machines/winXP/Snapshots/\{8c816439-1e6e-430f-9865-db7a2a96206f\}.vdi /virtual/Machines/winXP/Snapshots
 
 
 # alles lesbar/schreibbar machen

@@ -4,7 +4,7 @@
 # For Bugs send mail to (jeffbeck-at-web.de)
 
 SAVE=/media/SCHULE/virtualbox/
-MYMACHINE=$HOME/.VirtualBox/Machines/winXP-2010/
+MYMACHINE=$HOME/.VirtualBox/Machines/winXP/
 
 # Verzeichnis VirtualBox-pack-and-go anlegen
 
