@@ -53,6 +53,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/leoclient
+	$(MAKE) -B leoclient-virtualbox DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-leovirtstarter-client DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-leovirtstarter-server DESTDIR=$(CURDIR)/debian/leoclient
 	$(MAKE) -B leoclient-leovirtstarter-common DESTDIR=$(CURDIR)/debian/leoclient

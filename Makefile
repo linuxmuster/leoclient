@@ -5,6 +5,8 @@ DESTDIR=
 
 # Virtualbox
 VBOXDIR=$(DESTDIR)/usr/bin
+LEOVIRT=$(DESTDIR)/usr/share/leoclient-virtualbox
+DEFVM=virtualbox/default-winXP-VM
 VIRTCONF=$(DESTDIR)/etc/leovirtstarter
 LEOCLIENTCONF=$(DESTDIR)/etc/leoclient
 MENU=$(DESTDIR)/usr/share/menu
@@ -26,6 +28,9 @@ help:
 	@echo ' '
 	@echo '   make help'
 	@echo '      show this help'
+	@echo ' '
+	@echo '   make leoclient-virtualbox'
+	@echo '      install virtualbox default machines and login script'
 	@echo ' '
 	@echo '   make leoclient-leovirtstarter-client'
 	@echo '      install virtualbox gui to start machines'
@@ -73,6 +78,22 @@ default:
 #	@install -d -m0755 -oroot -groot $(VBOXDIR)
 #	@install -oroot -groot --mode=0755 virtualbox/virtualbox-vm-conf-kopiere#n.sh $(VBOXDIR)
 
+leoclient-virtualbox:
+	@echo '   * Installing leoclient-virtualbox'
+	@echo '   * Installing script to setup default VirtualBox configuration'
+	@install -d -m0755 -oroot -groot $(VBOXDIR)
+	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
+	@echo '   * Installing default win-XP-VM'
+	@install -d -m0755 -oroot -groot $(LEOVIRT)
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox
+	@install -oroot -groot --mode=0755 $(DEFVM)/compreg.dat $(LEOVIRT)/VirtualBox
+	@install -oroot -groot --mode=0755 $(DEFVM)/VirtualBox.xml $(LEOVIRT)/VirtualBox
+	@install -oroot -groot --mode=0755 $(DEFVM)/xpti.dat $(LEOVIRT)/VirtualBox
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox/Machines
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox/Machines/winXP
+	@install -oroot -groot --mode=0755 $(DEFVM)/Machines/winXP/winXP.xml $(LEOVIRT)/VirtualBox/Machines/winXP
+
+
 leoclient-leovirtstarter-client:
 	@echo '   * Installing the client script'
 	@install -d -m0755 -oroot -groot $(VBOXDIR)
@@ -81,9 +102,6 @@ leoclient-leovirtstarter-client:
 	@install -d -m755 -oroot -groot $(VIRTCONF)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter.conf  $(VIRTCONF)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-onthego.conf  $(VIRTCONF)
-	@echo '   * Installing vbox scripts'
-	@install -d -m0755 -oroot -groot $(VBOXDIR)
-	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
 	@echo '   * Installing unity dash entry'
 	@install -d -m0755 -oroot -groot $(DESKTOP)
 	@install -oroot -groot --mode=0644 virtualbox-gui/leovirtstarter-client.desktop $(DESKTOP)

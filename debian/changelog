@@ -1,3 +1,9 @@
+leoclient (0.1.3-1) precise; urgency=low
+
+  * new upstream with winXP configuration on login
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 09 Nov 2012 17:48:00 +0100
+
 leoclient (0.1.2-2) precise-testing; urgency=low
 
   * copyright file added
