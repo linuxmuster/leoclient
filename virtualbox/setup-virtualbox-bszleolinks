@@ -1,6 +1,19 @@
 #!/bin/bash
 # Umstieg vom Name der virtuellen Maschine winXP-2010 auf winXP 
-# NUR wichtig für BSZ Leonberg
 # 13.11.2012
-ln -f -s /virtual/Machines/winXP-2010 /virtual/Machines/winXP
-ln -f -s  /virtual/vdi/winXP-2010.vdi /virtual/vdi/winXP.vdi 
+
+if [ -e /virtual/Machines/winXP ] 
+then
+ cd ~
+else
+ ln -s /virtual/Machines/winXP-2010 /virtual/Machines/winXP
+fi
+
+if [ -e /virtual/vdi/winXP.vdi ] 
+then
+ cd ~
+else
+ ln -s  /virtual/vdi/winXP-2010.vdi /virtual/vdi/winXP.vdi 
+fi
+ 
+exit 0
