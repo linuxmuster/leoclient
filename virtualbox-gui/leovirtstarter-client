@@ -265,7 +265,7 @@ foreach my $size (@ram_sizes){
 foreach my $dir (@ServerConf::children_shares_client){
     if (not -e $dir){
             system("mkdir -p $dir || sudo mkdir -p $dir");
-            system("chmod 777 $dir || sudo chmod 777 $dir");
+            system("chmod -R 777 $dir || sudo -R chmod 777 $dir");
     }
 }
 
@@ -721,7 +721,6 @@ sub start_zipped_snaphot {
                                              $progress_bar);
    
         system("mkdir -p $ServerConf::snapshot_file_dir || sudo mkdir -p $ServerConf::snapshot_file_dir");
-    #    system("chmod 777  $ServerConf::snapshot_file_dir || sudo chmod 777  $ServerConf::snapshot_file_dir");
         system("cd $ServerConf::snapshot_file_dir; unzip -o '$zipped_snapshot_file' &");
         print "$ServerConf::snapshot_file_dir\n";
         my $unzipped_actual_size=0;
@@ -804,6 +803,7 @@ sub getzip_timeout {
         $pb_win_get_zip->destroy;
         $copying_done=1;
         INFO "Snapshot was copied to $target";
+        system("chmod 777 $target");
         my $started=&start_zipped_snaphot($target);
         return FALSE;
     }
