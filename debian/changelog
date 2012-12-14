@@ -1,7 +1,12 @@
+leoclient (0.1.6-1) precise; urgency=low
+
+  * REALLY Fixed chmod 777 for leovirtstarter cache
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 23 Nov 2012 17:11:26 +0100
+
 leoclient (0.1.5-1) precise; urgency=low
 
   * Fixed chmod 777 for leovirtstarter cache
-  * 
 
  -- Ruediger Beck <bz@j1009p16.bszleo.de>  Thu, 15 Nov 2012 19:32:26 +0100
 
