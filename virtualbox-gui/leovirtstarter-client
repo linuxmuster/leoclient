@@ -31,6 +31,7 @@ my $clean_log=0;
 my $help=0;
 my $show_menu=0;
 my $snapshot_search_dir="";
+my $ignore_virtualbox=0;
 my $log="/tmp/leovirtstarter.log";
 # allow everybody to log into the logfile
 umask 000;
@@ -50,6 +51,7 @@ my $testopt=GetOptions(
            "on-the-go|g=s" => \$on_the_go,
            "clean|clean-cache" => \$clean_cache,
            "clean-log" => \$clean_log,
+           "ignore-virtualbox" => \$ignore_virtualbox,
            "snapshots|snapshots-search-dir|s=s" => \$snapshot_search_dir,
           );
 
@@ -74,6 +76,8 @@ if ($on_the_go ne "" and -e $on_the_go){
     system("/usr/bin/VirtualBox");
     exit;
 } 
+
+
 
 
 if ($clean_cache==1){
@@ -103,6 +107,12 @@ if ($help==1){
 Options
   -h  / --help
 
+Power User:
+  --ignore-virtualbox (start leovirtstarter even if VirtualBox ist running)
+    This may overwrite the virtual harddisk of a running virtual machine,
+    which will therefore crash.
+
+
 Development:
   --clean-cache   (clean all caches)
   --clean-log     (clean all log files)
@@ -110,11 +120,25 @@ Development:
 Non-Server use:
   --on-the-go /path/to/config/file  (using another config file)
   --snapshots /path/to/zipped/snapshots (override path in config files)
-  
 
 ');
    print "\n";
    exit;
+}
+
+
+
+# Abbruch, falls virtualbox schon läuft
+my $pid_string=`pgrep -f /usr/lib/virtualbox/VirtualBox`;
+chomp($pid_string);
+print "PID: <$pid_string>\n";
+if ($pid_string ne "" and $ignore_virtualbox==0){
+    print "VirtualBox is running already\n";
+    my $message="<b>Oracle VM VirtualBox</b> läuft schon!\n\n".
+                "Deshalb kann <b>VirtualBox Snapshotstarter</b> nicht gestartet werden.\n\n".
+                "Bitte beenden Sie zuerst <b>Oracle VM VirtualBox</b>!";
+    system("/usr/bin/zenity --warning --text='$message'");
+    exit;
 }
 
 
