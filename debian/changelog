@@ -1,5 +1,13 @@
 leoclient (0.1.6-1) precise; urgency=low
 
+  * Bugfix #15: Dont start leovirtstarter-client when VirtualBox 
+	is aleady running.
+     leovirtstarter-client: Option --ignore-virtualbox
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 14 Dec 2012 17:26:46 +0100
+
+leoclient (0.1.6-1) precise; urgency=low
+
   * REALLY Fixed chmod 777 for leovirtstarter cache
 
  -- Ruediger Beck <bz@j1009p16.bszleo.de>  Fri, 23 Nov 2012 17:11:26 +0100
