@@ -19,7 +19,7 @@ Package: leoclient-leovirtstarter-client
 Architecture: all
 Suggests: 
 Pre-Depends: leoclient-leovirtstarter-common
-Depends: libfilesys-df-perl, liblog-log4perl-perl
+Depends: libfilesys-df-perl, liblog-log4perl-perl, zenity
 Description: alternativ software to start VirtualBox
  leovirtstarter-client copies and caches VirtualBox snapshots and starts
  them
