@@ -1,4 +1,4 @@
-leoclient (0.1.7-1) precise; urgency=low
+leoclient (0.1.7-2) precise; urgency=low
 
   * Bugfix #15: Dont start leovirtstarter-client when VirtualBox 
 	is aleady running.
