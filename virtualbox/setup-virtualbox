@@ -27,7 +27,7 @@ then
 fi
 
 # existiert VirtualBox-Konfiguration lokal 
-if [ -d /etc/leoclient/VirtualBox ]
+if [ -d /etc/leoclient/VirtualBox/winXP ]
 then
  
  # VirtualBox-Konfiguration von lokal kopieren 
@@ -41,11 +41,11 @@ then
 
    if [ -d `echo $HEIMAT/.VirtualBox/Machines/winXP` ]
    then
-     cp /etc/leoclient/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
+     cp /etc/leoclient/VirtualBox/winXP/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    else
-     cp -r /etc/leoclient/VirtualBox/* $HEIMAT/.VirtualBox/
+     cp -r /etc/leoclient/VirtualBox/winXP/* $HEIMAT/.VirtualBox/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    fi
@@ -54,7 +54,7 @@ then
 
  else
   mkdir $HEIMAT/.VirtualBox
-  cp -r /etc/leoclient/VirtualBox/* $HEIMAT/.VirtualBox/
+  cp -r /etc/leoclient/VirtualBox/winXP/* $HEIMAT/.VirtualBox/
   PATCHEN="1"     # -> Pfad fuer shares werden angepasst
   HEIMATTMP="NEU" # -> RAM wird angepasst
  fi
@@ -167,9 +167,14 @@ fi
 
 # Netzwerkkarte aktivieren?
 
-# MAC-Adressen von Rechnern, die eine zweite Netzverbindung erhalten sollen
-# durch Leerzeichen getrennt
-#MACADRESSEN="00:17:31:19:9f:2c 00:13:d4:ed:f9:b0 00:04:76:f1:b5:8a 90:e6:ba:2c:d3:50"
+# Rechnern, deren virtuelle Maschine eine aktivierte Netzwerkkarte erhalten
+# soll, muessen in der Konfigurationsdatei 
+# /etc/leoclient/setup-virtualbox-nic.conf eingetragen sein.
+# Es muss die MAC-Adresse der Netzwerkkarte eingetragen sein,
+# die mit dem paed. Netz verbunden ist.
+# Ist eine zweite Netzwerkkarte im Rechner eingebaut, wird diese
+# auf die virtuelle Maschine gebridged.
+# a-f als Kleinbuchstaben eintragen.
 
 if [ -f /etc/leoclient/setup-virtualbox-nic.conf ]
 then
@@ -177,6 +182,13 @@ then
 else
  MACADRESSEN=""
 fi 
+
+
+# zu Testzwecken:
+# MAC-Adressen von Rechnern, deren VM eine Netzverbindung erhalten sollen,
+# durch Leerzeichen getrennt - hier fest eintragen statt Konfig-Datei
+#MACADRESSEN="00:17:31:19:9f:2c 00:13:d4:ed:f9:b0 00:04:76:f1:b5:8a 90:e6:ba:2c:d3:50"
+
 
 GEFUNDEN="0"
 MAC="00277EAB29"
