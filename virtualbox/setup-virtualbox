@@ -27,7 +27,7 @@ then
 fi
 
 # existiert VirtualBox-Konfiguration lokal 
-if [ -d /usr/share/leoclient-virtualbox/VirtualBox ]
+if [ -d /etc/leoclient/VirtualBox ]
 then
  
  # VirtualBox-Konfiguration von lokal kopieren 
@@ -41,11 +41,11 @@ then
 
    if [ -d `echo $HEIMAT/.VirtualBox/Machines/winXP` ]
    then
-     cp /usr/share/leoclient-virtualbox/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
+     cp /etc/leoclient/VirtualBox/Machines/winXP/winXP.xml $HEIMAT/.VirtualBox/Machines/winXP/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    else
-     cp -r /usr/share/leoclient-virtualbox/VirtualBox/* $HEIMAT/.VirtualBox/
+     cp -r /etc/leoclient/VirtualBox/* $HEIMAT/.VirtualBox/
      PATCHEN="1"     # -> Pfad fuer shares werden angepasst
      HEIMATTMP="NEU" # -> RAM wird angepasst
    fi
@@ -54,7 +54,7 @@ then
 
  else
   mkdir $HEIMAT/.VirtualBox
-  cp -r /usr/share/leoclient-virtualbox/VirtualBox/* $HEIMAT/.VirtualBox/
+  cp -r /etc/leoclient/VirtualBox/* $HEIMAT/.VirtualBox/
   PATCHEN="1"     # -> Pfad fuer shares werden angepasst
   HEIMATTMP="NEU" # -> RAM wird angepasst
  fi
@@ -170,7 +170,13 @@ fi
 # MAC-Adressen von Rechnern, die eine zweite Netzverbindung erhalten sollen
 # durch Leerzeichen getrennt
 #MACADRESSEN="00:17:31:19:9f:2c 00:13:d4:ed:f9:b0 00:04:76:f1:b5:8a 90:e6:ba:2c:d3:50"
-MACADRESSEN="00:15:f2:c6:26:76 00:15:f2:c6:24:19 00:15:f2:c6:27:2b 00:15:f2:c6:26:94 00:15:f2:c6:24:ae 00:15:f2:c6:27:21 00:15:f2:c6:27:3c 00:15:f2:c6:26:c8 00:15:f2:c6:26:d9 00:15:f2:c6:23:d4 00:15:f2:c6:26:96 00:15:f2:c6:25:e2 00:15:f2:c6:26:e5 00:15:f2:c6:27:38 00:13:d4:f1:5f:13 00:15:f2:c6:26:c4 00:15:f2:c6:26:8f 00:15:f2:c6:26:ab 00:15:f2:c5:24:08 00:15:f2:c6:26:f8 00:17:31:19:9d:2b 00:04:76:10:84:04 00:17:31:19:9f:2c 00:13:d4:ed:f9:b0"
+
+if [ -f /etc/leoclient/setup-virtualbox-nic.conf ]
+then
+ MACADRESSEN=`cat /etc/leoclient/setup-virtualbox-nic.conf | cut -d "#" -f 1`
+else
+ MACADRESSEN=""
+fi 
 
 GEFUNDEN="0"
 MAC="00277EAB29"

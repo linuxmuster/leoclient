@@ -1,0 +1,47 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH SETUP-VIRTUALBOX_NIC.CONF 5 "January 08, 2013"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+/etc/leoclient/setup-virtualbox-nic.conf \- Konfigurationsdatei für das script setup-virtualbox
+.br
+.SH DESCRIPTION
+setup-virtualbox erzeugt mit Hilfe von setup-virtualbox-nic.conf beim Login die Konfigurationsdateien für VirtualBox. 
+
+Ein Eintrag in dieser Datei erzeugt eine aktivierte, gebridgte Netzwerkkarte für die virtuelle Maschine winXP. 
+
+
+.PP
+.SH SYNTAX
+
+Kommentare beginnen mit #. Leerzeilen sind erlaubt.
+
+In jeder Zeile steht eine MAC-Adresse aus /etc/linuxmuster/workstations. a-f müssen dabei klein geschrieben sein.
+
+Besitzt dieser physikalische Rechner EINE physikalische Netzwerkkarte, so wird die virtuelle Netzwerkkarte ins pädagogische Netz gebridged.
+
+Besitzt dieser physikalische Rechner ZWEI Netzwerkkarten, so wird die virtuelle Netzwerkkarte auf diejenige physikalische Netzwerkkarte gebridged, die NICHT ins pädagogische Netz verbunden ist. In der Konfiguratiosdatei wird die MAC-Adresse eingetragen, deren Netzwerkkarte mit dem pädagogischen Netz verbunden ist. Somit kann z.B. in ein Intranet gebridged werden, in dem Aktivierungsserver, o. Ä. zu finden sind. 
+
+Die virtuelle MAC-Adresse entspricht dem Eintrag in dieser Konfigurationsdatei, allerdings beginnend mit 08.
+
+
+Physikalische Rechner, deren MAC-Adresse nicht in setup-virtualbox-nic.conf stehen, haben deaktivierte Netzwerkkarten für die virtuelle Maschine.
+
+.TP
+
+
+.SH AUTHOR
+Written by <jeffbeck@web.de>.
