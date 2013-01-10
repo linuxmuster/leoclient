@@ -32,12 +32,14 @@ case "$1" in
     ;;
 
     upgrade)
-    if [ -e /etc/leoclient/VirtualBox/winXP]
+    if [ -e /etc/leoclient/VirtualBox/winXP ]
     then
         # keep your hands off
+        echo "Do Nothing"
     else
-         if [ -d /usr/share/leoclient-virtualbox/VirtualBox]
+         if [ -d /usr/share/leoclient-virtualbox/VirtualBox ]
          then
+            mkdir -p /etc/leoclient/VirtualBox/winXP 
             cp -r /usr/share/leoclient-virtualbox/VirtualBox /etc/leoclient/VirtualBox/winXP
          fi
     fi
