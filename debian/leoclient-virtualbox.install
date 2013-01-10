@@ -1,7 +1,6 @@
 etc/leoclient/setup-virtualbox-nic.conf
 usr/bin/setup-virtualbox
-
-etc/leoclient/VirtualBox/winXP/compreg.dat
-etc/leoclient/VirtualBox/winXP/xpti.dat
-etc/leoclient/VirtualBox/winXP/VirtualBox.xml
-etc/leoclient/VirtualBox/winXP/Machines/winXP/winXP.xml
+usr/share/leoclient-virtualbox/examples/winXP/compreg.dat
+usr/share/leoclient-virtualbox/examples/winXP/xpti.dat
+usr/share/leoclient-virtualbox/examples/winXP/VirtualBox.xml
+usr/share/leoclient-virtualbox/examples/winXP/Machines/winXP/winXP.xml

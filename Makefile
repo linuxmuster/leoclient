@@ -6,7 +6,8 @@ DESTDIR=
 # Virtualbox
 VBOXDIR=$(DESTDIR)/usr/bin
 #LEOVIRT=$(DESTDIR)/usr/share/leoclient-virtualbox
-LEOVIRT=$(DESTDIR)/etc/leoclient
+LEOVIRT=$(DESTDIR)/usr/share/leoclient-virtualbox
+#LEOVIRT=$(DESTDIR)/etc/leoclient
 DEFVM=virtualbox/examples-winXP-VM
 VIRTCONF=$(DESTDIR)/etc/leovirtstarter
 LEOCLIENTCONF=$(DESTDIR)/etc/leoclient
@@ -86,15 +87,16 @@ leoclient-virtualbox:
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
 	@echo '   * Installing default win-XP-VM'
 	@install -d -m0755 -oroot -groot $(LEOVIRT)
-	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox
+	@install -d -m0755 -oroot -groot $(LEOCLIENTCONF)
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox-nic.conf $(LEOCLIENTCONF)
-	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox/winXP
-	@install -oroot -groot --mode=0755 $(DEFVM)/compreg.dat $(LEOVIRT)/VirtualBox/winXP
-	@install -oroot -groot --mode=0755 $(DEFVM)/VirtualBox.xml $(LEOVIRT)/VirtualBox/winXP
-	@install -oroot -groot --mode=0755 $(DEFVM)/xpti.dat $(LEOVIRT)/VirtualBox/winXP
-	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox/winXP/Machines
-	@install -d -m0755 -oroot -groot $(LEOVIRT)/VirtualBox/winXP/Machines/winXP
-	@install -oroot -groot --mode=0755 $(DEFVM)/Machines/winXP/winXP.xml $(LEOVIRT)/VirtualBox/winXP/Machines/winXP
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples/winXP
+	@install -oroot -groot --mode=0755 $(DEFVM)/compreg.dat $(LEOVIRT)/examples/winXP
+	@install -oroot -groot --mode=0755 $(DEFVM)/VirtualBox.xml $(LEOVIRT)/examples/winXP
+	@install -oroot -groot --mode=0755 $(DEFVM)/xpti.dat $(LEOVIRT)/examples/winXP
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples/winXP/Machines
+	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples/winXP/Machines/winXP
+	@install -oroot -groot --mode=0755 $(DEFVM)/Machines/winXP/winXP.xml $(LEOVIRT)/examples/winXP/Machines/winXP
 
 
 leoclient-leovirtstarter-client:
