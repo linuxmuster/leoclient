@@ -35,12 +35,13 @@ case "$1" in
     if [ -e /etc/leoclient/VirtualBox/winXP ]
     then
         # keep your hands off
-        echo "Do Nothing"
+        echo "Nothing to save ..."
     else
          if [ -d /usr/share/leoclient-virtualbox/VirtualBox ]
          then
-            mkdir -p /etc/leoclient/VirtualBox/winXP 
-            cp -r /usr/share/leoclient-virtualbox/VirtualBox /etc/leoclient/VirtualBox/winXP
+            mkdir -p /etc/leoclient/VirtualBox
+            cp -r /usr/share/leoclient-virtualbox/VirtualBox /etc/leoclient/VirtualBox
+            mv /etc/leoclient/VirtualBox/VirtualBox /etc/leoclient/VirtualBox/winXP
          fi
     fi
     ;;

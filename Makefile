@@ -87,8 +87,8 @@ leoclient-virtualbox:
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox $(VBOXDIR)
 	@echo '   * Installing default win-XP-VM'
 	@install -d -m0755 -oroot -groot $(LEOVIRT)
-	@install -d -m0755 -oroot -groot $(LEOCLIENTCONF)
 	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples
+	@install -d -m0755 -oroot -groot $(LEOCLIENTCONF)
 	@install -oroot -groot --mode=0755 virtualbox/setup-virtualbox-nic.conf $(LEOCLIENTCONF)
 	@install -d -m0755 -oroot -groot $(LEOVIRT)/examples/winXP
 	@install -oroot -groot --mode=0755 $(DEFVM)/compreg.dat $(LEOVIRT)/examples/winXP

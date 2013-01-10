@@ -1,3 +1,15 @@
+leoclient (0.1.9-1) precise; urgency=low
+
+  * Path fixes
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Thu, 10 Jan 2013 16:16:01 +0100
+
+leoclient (0.1.8-1) precise; urgency=low
+
+  * New Organisation for VirtualBox configuration files
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Thu, 10 Jan 2013 14:06:25 +0100
+
 leoclient (0.1.7-2) precise; urgency=low
 
   * Bugfix #15: Dont start leovirtstarter-client when VirtualBox is aleady running.
