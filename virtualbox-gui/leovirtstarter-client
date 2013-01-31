@@ -524,8 +524,12 @@ sub check_base_image {
         if (-d $target_dir){
             # nothing to do
         } else {
-            print "I need to create $target_dir on your system:\n";
-            system("mkdir -p $target_dir || sudo mkdir -p $target_dir");
+            print "Could not find $target_dir on your system:\n";
+            my $message="<b>Das Verzeichnis $target_dir konnte nicht gefunden werden!\n\n".
+		        "   Bitte starten Sie den Rechner neu\n".
+                        "   und synchronisiren dann alle Partitionen!</b>";
+            system("/usr/bin/zenity --error --text='$message'");
+            exit;
         } 
     }
     if ($get_it==1){

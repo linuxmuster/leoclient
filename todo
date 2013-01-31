@@ -3,6 +3,12 @@
 # leoclient
 ############################################################
 
+Fix: Raum nicht am Hostname ergreppen,
+     sondern an der Gruppe des Klassenarbeitsbenutzers(=Hostname)
+
+
+
+
 patchen von /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy
 um user zu ermöglichen.
 
