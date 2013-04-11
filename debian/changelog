@@ -1,3 +1,9 @@
+leoclient (0.1.11-1) precise; urgency=low
+
+  * Bugfix: create configs in /etc post install
+
+ -- Ruediger Beck <bz@j1009p16.bszleo.de>  Thu, 11 Apr 2013 17:29:41 +0200
+
 leoclient (0.1.10-1) precise; urgency=low
 
   * New upstream Release
@@ -51,7 +57,7 @@ leoclient (0.1.2-2) precise-testing; urgency=low
 
   * copyright file added
 
- -- bz <bz@overpower>  Tue, 02 Oct 2012 11:50:07 +0200
+ -- bz <jeffbeck@web.de>  Tue, 02 Oct 2012 11:50:07 +0200
 
 leoclient (0.1.2-1) precise-testing; urgency=low
 
