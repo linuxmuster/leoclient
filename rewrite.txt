@@ -1,0 +1,76 @@
+Ideas for a rewrite of this Project 
+(New name: leovms Leonberg Virtual Machine Sharing):
+
+Server:
+-------------------------------------------------------
+STEP1:
+- add a project p_leovms: Uploaders for snapshots
+
+- include a /etc/samba/smb.conf.leovms
+  -> must be 
+     1) included in /etc/samba/smb.conf.shares
+     2) service smbd reload
+
+This makes 2 Shares available:
+  leovms-data   /home/leovms/data    RO for base image and snapshots 
+  leovms-upload /home/leovms/upload  RW writeble for the group/project leovms
+
+
+
+STEP2:
+- include a /etc/samba/smb.conf.leovms-ldap
+  must be configured with ip, ... to run on a different machine
+
+
+What is simpler tan before
+- Data ist always in /home/leovms
+- no Configuration file
+- Konfiguration for the clients in in
+      /home/leovms/data/leovms-client.conf
+      /home/leovms/data/leovms-vbox.conf
+- In /home/leovms/data ar different virtual machines:
+     /home/leovms/data/vm-winxp
+     /home/leovms/data/vm-win7
+     /home/leovms/data/vm-tails
+     /home/leovms/data/vm-ubuntu1204
+     .......
+     These Contain for this vm:
+        1) Base Image
+        2) Snapshots
+        3) Virtualbox Configuration files
+
+
+
+
+
+
+Client:
+
+- mounts the shares in /etc/fstab (possibly in leovms-starter???)
+
+- leovms-starter (leovirtstarter)
+  - at start:  which vm (vm-winxp, vm-win7, virtualBox)
+    this sets $HOME so that (keep $HOME in memory)
+      ONE of the possible vm's is used and displayed like now
+
+
+- uploading a VM from virtualbox
+  - additional menu sets $HOME to the normal,real $HOME of the user.
+    Then a list of virtalbox machines is displayd, which can be uploaeded
+    (uuids a uploaded and the fitting snapshot file)
+
+
+
+
+
+
+Additional configuration in image.conf
+  - update RAM/RAM fixed, ...
+  
+
+
+
+
+
+
+ 
