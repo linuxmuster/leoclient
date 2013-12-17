@@ -24,10 +24,16 @@ STEP2:
 
 What is simpler tan before
 - Data ist always in /home/leovms
-- no Configuration file
+- no Configuration file for the server
+
 - Konfiguration for the clients in in
-      /home/leovms/data/leovms-client.conf
-      /home/leovms/data/leovms-vbox.conf
+    -  /home/leovms/data/leovms-client.conf
+        - where are the caches
+        - how large are the caches
+    -  /home/leovms/data/leovms-vbox.conf
+        - where are the unzipped machines
+
+     
 - In /home/leovms/data ar different virtual machines:
      /home/leovms/data/vm-winxp
      /home/leovms/data/vm-win7
@@ -38,7 +44,7 @@ What is simpler tan before
         1) Base Image
         2) Snapshots
         3) Virtualbox Configuration files
-
+        4) Server configuration files (copied on every start for offline use)
 
 
 
@@ -49,9 +55,21 @@ Client:
 - mounts the shares in /etc/fstab (possibly in leovms-starter???)
 
 - leovms-starter (leovirtstarter)
-  - at start:  which vm (vm-winxp, vm-win7, virtualBox)
-    this sets $HOME so that (keep $HOME in memory)
+  - at start:  
+    1) which vm (vm-winxp, vm-win7, virtualBox) -> pick one
+    2) set $HOME to $HOME/.leovms (keep $HOME saved in memory)
       ONE of the possible vm's is used and displayed like now
+    3) Display list of snapshots -> pick one
+    4) extract base file (if necessary)
+    5) extract snapshot
+    6) copy configuration files to the (new) $HOME
+    7) Patch the configuration file
+       - Patch the shared directory
+       - ... what else ?
+    8) Start the machine
+       - configure with option:
+         - RAM size
+         - ... what else?
 
 
 - uploading a VM from virtualbox
@@ -59,6 +77,20 @@ Client:
     Then a list of virtalbox machines is displayd, which can be uploaeded
     (uuids a uploaded and the fitting snapshot file)
 
+
+
+- offline use (vm is chosen already)
+  - additional menu shows 
+    left                                    right
+    - available vm's on the server          - cached snapshots
+    - checkboxes for each machine           - free cache size, ...
+  - sync machines:
+    pick checkboxes, then press sync button
+      -> copies snapshots in the cache
+
+
+ Configuration:
+  - see server
 
 
 
