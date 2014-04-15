@@ -1,3 +1,9 @@
+leoclient (0.1.11-1ubuntu1) trusty; urgency=low
+
+  * Changed target repo to trusty
+
+ -- Frank Schiebel <frank@linuxmuster.net>  Tue, 15 Apr 2014 17:51:19 +0200
+
 leoclient (0.1.11-1) precise; urgency=low
 
   * Bugfix: create configs in /etc post install
