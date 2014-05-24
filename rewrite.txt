@@ -1,29 +1,33 @@
 Ideas for a rewrite of this Project 
-(New name: leovms Leonberg Virtual Machine Sharing):
+(New name: leovms Leonberg Virtual Machine Sharing/or leoclient2):
 
+-------------------------------------------------------
 Server:
 -------------------------------------------------------
 STEP1:
 - add a project p_leovms: Uploaders for snapshots
 
 - include a /etc/samba/smb.conf.leovms
-  -> must be 
-     1) included in /etc/samba/smb.conf.shares
+  -> must be (done by root)
+     1) included in /etc/samba/smb.conf.shares 
      2) service smbd reload
 
 This makes 2 Shares available:
   leovms-data   /home/leovms/data    RO for base image and snapshots 
-  leovms-upload /home/leovms/upload  RW writeble for the group/project leovms
+  leovms-upload /home/leovms/upload  RW writeble for the group/project p_leovms
 
 
 
 STEP2:
 - include a /etc/samba/smb.conf.leovms-ldap
   must be configured with ip, ... to run on a different machine
+  -> necessary to see the ldap-users
+
+OR: 
 
 
-What is simpler tan before
-- Data ist always in /home/leovms
+What is simpler than before
+- Data is always in /home/leovms
 - no Configuration file for the server
 
 - Konfiguration for the clients in in
@@ -34,7 +38,7 @@ What is simpler tan before
         - where are the unzipped machines
 
      
-- In /home/leovms/data ar different virtual machines:
+- In /home/leovms/data or different virtual machines:
      /home/leovms/data/vm-winxp
      /home/leovms/data/vm-win7
      /home/leovms/data/vm-tails
@@ -49,19 +53,21 @@ What is simpler tan before
 
 
 
-
+------------------------------------------------------------
 Client:
+------------------------------------------------------------
 
 - mounts the shares in /etc/fstab (possibly in leovms-starter???)
 
 - leovms-starter (leovirtstarter)
   - at start:  
     1) which vm (vm-winxp, vm-win7, virtualBox) -> pick one
-    2) set $HOME to $HOME/.leovms (keep $HOME saved in memory)
-      ONE of the possible vm's is used and displayed like now
-    3) Display list of snapshots -> pick one
-    4) extract base file (if necessary)
-    5) extract snapshot
+    2) set $HOME to $HOME/.leovms 
+      (keep $HOME saved in script variable)
+      ONE of the possible vm's is used and displayed as before
+       3) Display list of snapshots -> pick one
+       4) extract base file (if necessary)
+       5) extract snapshot
     6) copy configuration files to the (new) $HOME
     7) Patch the configuration file
        - Patch the shared directory
@@ -104,5 +110,7 @@ Additional configuration in image.conf
 
 
 
+Questions:
 
+Variable VBOX_USER_HOME
  
