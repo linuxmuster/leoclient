@@ -11,7 +11,7 @@ use File::Basename;
 use File::Copy;
 use File::Path;
 # use log names of perl variables, i.e. $UID
-use English;
+use English qw( -no_match_vars );
 use Log::Log4perl qw(:easy);
 
 my $config_file = "/etc/leoclient/leoclient-vm-printer.conf";
